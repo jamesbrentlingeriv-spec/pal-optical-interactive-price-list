@@ -1,0 +1,12 @@
+{
+  "name": "pal-optical-interactive-price-list",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Static HTML version of PAL Optical interactive price list",
+  "scripts": {
+    "start": "npx --yes serve . -l 3000"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

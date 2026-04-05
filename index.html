@@ -1,0 +1,2749 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAL Optical Interactive Price List</title>
+  <link rel="manifest" href="./public/manifest.json">
+  <meta name="theme-color" content="#3f3f46">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" href="./favicon.ico">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <style>
+    :root {
+      --bg: #edf1f5;
+      --panel: #f7f9fc;
+      --panel-soft: #e3e8ef;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #d1d5db;
+      --accent: #6b7280;
+      --accent-strong: #4b5563;
+      --good: #9ca3af;
+      --shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
+      --rainbow-flow: linear-gradient(120deg, #000000, #111111, #1a1a1a, #050505, #000000, #050505, #1a1a1a, #000000);
+    }
+
+    body.dark {
+      --bg: #090807;
+      --panel: #1d1917;
+      --panel-soft: #282320;
+      --text: #f6eee2;
+      --muted: #a1a1aa;
+      --line: #3f3f46;
+      --accent: #a1a1aa;
+      --accent-strong: #d4d4d8;
+      --good: #d4d4d8;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.42);
+      --rainbow-flow: linear-gradient(120deg, #ffffff, #f5f5f5, #e5e5e5, #ffffff, #fafafa, #ffffff, #e5e5e5, #ffffff);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    body.dark {
+      background: #090807;
+      color: #f6eee2;
+    }
+
+    body.dark p,
+    body.dark span,
+    body.dark h1,
+    body.dark h2,
+    body.dark h3,
+    body.dark h4,
+    body.dark h5,
+    body.dark h6,
+    body.dark label,
+    body.dark li,
+    body.dark small,
+    body.dark strong,
+    body.dark input,
+    body.dark textarea,
+    body.dark select,
+    body.dark button {
+      color: #f6eee2;
+    }
+
+    body.dark input::placeholder,
+    body.dark textarea::placeholder {
+      color: #baaa98;
+      opacity: 0.85;
+    }
+
+    @keyframes rainbow-flow {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      backdrop-filter: blur(5px);
+      border-bottom: 1px solid var(--line);
+      padding: 7px 10px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-video {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .logo-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.18rem;
+      line-height: 1.1;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .search-wrap {
+      position: relative;
+      max-width: 620px;
+      width: 100%;
+      justify-self: center;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background:
+        linear-gradient(var(--panel-soft), var(--panel-soft)) padding-box,
+        var(--rainbow-flow) border-box;
+      background-size: 100% 100%, 300% 300%;
+      animation: rainbow-flow 8s linear infinite;
+      color: var(--text);
+      padding: 8px 14px 8px 38px;
+      outline: none;
+      font-size: 0.84rem;
+      font-weight: 500;
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.95rem;
+      pointer-events: none;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn,
+    .chip,
+    .icon-btn {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn {
+      padding: 7px 11px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .btn.primary {
+      background: var(--panel);
+      border-color: transparent;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+    }
+
+    .topbar,
+    .logo-video,
+    .btn,
+    .chip,
+    .icon-btn,
+    .nav-item,
+    .card,
+    .table,
+    .before-after,
+    .media,
+    .modal-card,
+    .opti-block,
+    .display,
+    .key,
+    .result,
+    .receipt,
+    .th-visual-wrap,
+    .edu-tile,
+    .edu-modal-card,
+    .edu-color-btn,
+    .lens-cutaway,
+    .scene-card,
+    .seg-lens {
+      position: relative;
+      isolation: isolate;
+      border-color: transparent !important;
+    }
+
+    .topbar::before,
+    .logo-video::before,
+    .btn::before,
+    .chip::before,
+    .icon-btn::before,
+    .nav-item::before,
+    .card::before,
+    .table::before,
+    .before-after::before,
+    .media::before,
+    .modal-card::before,
+    .opti-block::before,
+    .display::before,
+    .key::before,
+    .result::before,
+    .receipt::before,
+    .th-visual-wrap::before,
+    .edu-tile::before,
+    .edu-modal-card::before,
+    .edu-color-btn::before,
+    .lens-cutaway::before,
+    .scene-card::before,
+    .seg-lens::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: var(--rainbow-flow);
+      background-size: 300% 300%;
+      animation: rainbow-flow 11s linear infinite;
+      opacity: 0.9;
+      pointer-events: none;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .table::before {
+      border-radius: 14px;
+    }
+
+    .btn.primary {
+      color: var(--text);
+    }
+
+    body.dark .switch.active,
+    body.dark .key.eq {
+      color: #ffffff;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100dvh - 56px);
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      background: color-mix(in srgb, var(--panel) 82%, var(--bg));
+      padding: 8px;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .sidebar {
+      scrollbar-width: thin;
+    }
+
+    body.dark .sidebar {
+      scrollbar-color: #4a433d #1b1715;
+    }
+
+    body.dark .sidebar::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    body.dark .sidebar::-webkit-scrollbar-track {
+      background: #1b1715;
+    }
+
+    body.dark .sidebar::-webkit-scrollbar-thumb {
+      background: #4a433d;
+      border-radius: 999px;
+      border: 2px solid #1b1715;
+    }
+
+    body.dark .sidebar::-webkit-scrollbar-thumb:hover {
+      background: #5c544d;
+    }
+
+    .side-title {
+      margin: 4px 8px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .nav-item {
+      text-align: left;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text);
+      padding: 11px 44px 11px 12px;
+      min-height: 52px;
+      font-size: 0.96rem;
+      letter-spacing: 0.02em;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .nav-item span:first-child {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .nav-item span:last-child {
+      font-size: 1.15rem;
+      line-height: 1;
+      opacity: 0.9;
+      flex: 0 0 auto;
+      margin-left: 16px;
+    }
+
+    .nav-item.active {
+      background: var(--panel);
+      border-color: var(--line);
+      font-weight: 600;
+      box-shadow: none;
+    }
+
+    .nav-item::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ff2b2b;
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .nav-item.active::after {
+      opacity: 1;
+    }
+
+    .nav-item::before {
+      padding: 1px;
+      animation: none;
+      background: var(--cat-outline, var(--rainbow-flow));
+      background-size: 100% 100%;
+      opacity: 0;
+    }
+
+    .nav-item.active::before {
+      opacity: 1;
+    }
+
+    .nav-list .nav-item:nth-child(6n + 1) {
+      --cat-outline: var(--rainbow-flow);
+    }
+
+    .nav-list .nav-item:nth-child(6n + 2) {
+      --cat-outline: var(--rainbow-flow);
+    }
+
+    .nav-list .nav-item:nth-child(6n + 3) {
+      --cat-outline: var(--rainbow-flow);
+    }
+
+    .nav-list .nav-item:nth-child(6n + 4) {
+      --cat-outline: var(--rainbow-flow);
+    }
+
+    .nav-list .nav-item:nth-child(6n + 5) {
+      --cat-outline: var(--rainbow-flow);
+    }
+
+    .nav-list .nav-item:nth-child(6n + 6) {
+      --cat-outline: var(--rainbow-flow);
+    }
+
+    .main {
+      min-width: 0;
+      height: 100%;
+      overflow-y: auto;
+      padding: 12px 22px 16px;
+    }
+
+    #contentArea {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+
+    #mobileCategories {
+      width: min(1120px, 100%);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .mobile-cats {
+      display: none;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+    }
+
+    .chip {
+      white-space: nowrap;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .chip.active {
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: none;
+      padding-left: 18px;
+    }
+
+    .chip::before {
+      opacity: 0;
+    }
+
+    .chip.active::before {
+      opacity: 1;
+    }
+
+    .chip.active::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ff2b2b;
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: color-mix(in srgb, var(--panel) 96%, transparent);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: none;
+    }
+
+    .hero {
+      padding: 16px;
+      margin-bottom: 10px;
+      animation: fade-up 0.28s ease;
+    }
+
+    .hero-kicker {
+      margin: 0 0 8px;
+      font-size: 0.74rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #6b7280;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: 2.8rem;
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      font-weight: 700;
+    }
+
+    .hero p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 780px;
+      font-size: 1.06rem;
+      font-weight: 500;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    .table thead th {
+      text-align: left;
+      font-size: 0.78rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: #dbe2ea;
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 600;
+    }
+
+    .table thead th:last-child {
+      text-align: right;
+      width: 140px;
+    }
+
+    .table tbody td {
+      border-top: 1px solid var(--line);
+      padding: 8px 10px;
+      vertical-align: top;
+    }
+
+    .table tbody tr:hover {
+      background: #e9f6ff;
+    }
+
+    .table tbody tr:nth-child(6n) {
+      background: #e4f2fb;
+    }
+
+    body.dark .topbar {
+      background: color-mix(in srgb, #1f1a17 94%, #090807);
+    }
+
+    body.dark .sidebar {
+      background: #1b1715;
+    }
+
+    body.dark .side-title {
+      color: #8f7e6a;
+    }
+
+    body.dark .search-wrap input {
+      background: linear-gradient(#26211e, #26211e) padding-box,
+        linear-gradient(110deg, #34302c, #25211e) border-box;
+      animation: none;
+    }
+
+    body.dark .btn,
+    body.dark .chip,
+    body.dark .icon-btn {
+      background: #26211e;
+      border-color: #3a322d;
+    }
+
+    body.dark .card,
+    body.dark .table {
+      background: #1d1917;
+    }
+
+    body.dark .table thead th {
+      background: #221d1a;
+      color: #958775;
+      border-bottom-color: #352e28;
+    }
+
+    body.dark .table tbody td {
+      border-top-color: #352e28;
+    }
+
+    body.dark .table tbody tr:hover {
+      background: #2a2421;
+    }
+
+    body.dark .table tbody tr:nth-child(6n) {
+      background: #26211e;
+    }
+
+    body.dark .hero-kicker {
+      color: #d4d4d8;
+    }
+
+    body.dark .nav-list .nav-item {
+      --cat-outline: var(--rainbow-flow);
+      color: #f6eee2;
+    }
+
+    body.dark .nav-item.active,
+    body.dark .chip.active {
+      background: #25201d;
+    }
+
+    body.dark .item-name {
+      color: #ffffff;
+    }
+
+    body.dark .item-desc {
+      color: #b7b8bd;
+    }
+
+    .item-name {
+      font-weight: 600;
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .item-desc {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.2;
+    }
+
+    .item-price {
+      text-align: right;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 600;
+      font-size: 1.02rem;
+      letter-spacing: 0.01em;
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .search-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .edu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .edu-card {
+      padding: 16px;
+    }
+
+    .edu-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .edu-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.42;
+    }
+
+    .media {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #000;
+      margin-top: 12px;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+
+    .switches {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .switch {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-soft);
+      color: var(--text);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .switch.active {
+      background: var(--good);
+      color: #07210f;
+      border-color: transparent;
+    }
+
+    .before-after {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      margin-top: 12px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+
+    .before-after img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .before-layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      width: 50%;
+    }
+
+    .before-label,
+    .after-label {
+      position: absolute;
+      bottom: 10px;
+      z-index: 2;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    .before-label {
+      left: 10px;
+    }
+
+    .after-label {
+      right: 10px;
+    }
+
+    .ba-range {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .edu-library {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .edu-tile {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      padding: 14px;
+      cursor: pointer;
+      text-align: left;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      display: grid;
+      gap: 8px;
+    }
+
+    .edu-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      display: grid;
+      place-items: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .edu-title {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .edu-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.83rem;
+      line-height: 1.4;
+    }
+
+    .edu-link {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+
+    .edu-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 85;
+      background: rgba(2, 6, 23, 0.58);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .edu-modal.open {
+      display: flex;
+    }
+
+    .edu-modal-card {
+      width: min(1200px, 97vw);
+      max-height: 92vh;
+      overflow: auto;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      animation: fade-up 0.2s ease;
+    }
+
+    .edu-modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 520px;
+    }
+
+    .edu-visual-pane,
+    .edu-copy-pane {
+      padding: 16px;
+    }
+
+    .edu-visual-pane {
+      border-right: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel-soft) 84%, transparent);
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .edu-copy-pane {
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .edu-note {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-soft);
+      color: var(--muted);
+      padding: 10px;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .edu-benefits {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .edu-benefits li {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel-soft);
+      padding: 8px 10px;
+      font-size: 0.83rem;
+      color: var(--text);
+      line-height: 1.35;
+    }
+
+    .edu-colors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .edu-color-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .edu-color-btn.active {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 14%, var(--panel));
+    }
+
+    .edu-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.12);
+    }
+
+    .edu-overlay {
+      position: absolute;
+      inset: 0;
+      mix-blend-mode: multiply;
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .edu-water,
+    .edu-smudge {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .edu-water {
+      background-image: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.6) 0 4px, transparent 5px),
+        radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.4) 0 6px, transparent 7px),
+        radial-gradient(circle at 75% 65%, rgba(255, 255, 255, 0.35) 0 8px, transparent 9px);
+      opacity: 0.5;
+    }
+
+    .edu-smudge {
+      background-image: radial-gradient(circle at 30% 35%, rgba(255, 255, 255, 0.58) 0%, transparent 44%),
+        radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.55) 0%, transparent 38%);
+      filter: blur(10px);
+      opacity: 0.45;
+    }
+
+    .lens-cutaway {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .lens-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .lens-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 700;
+    }
+
+    .lens-shell {
+      height: 54px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--panel-soft) 80%, transparent);
+      display: grid;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .lens-profile {
+      height: 100%;
+      width: 100%;
+      border-left: 12px solid rgba(15, 23, 42, 0.16);
+      border-right: 12px solid rgba(15, 23, 42, 0.16);
+      border-radius: 999px;
+    }
+
+    .lens-profile.thin {
+      border-left-width: 4px;
+      border-right-width: 4px;
+      border-color: rgba(5, 150, 105, 0.5);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .lens-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .lens-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--panel-soft) 55%, var(--panel));
+      padding: 10px;
+      display: grid;
+      gap: 9px;
+      align-content: start;
+    }
+
+    .lens-card-title {
+      margin: 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .lens-face {
+      width: 100%;
+      max-width: 180px;
+      aspect-ratio: 1/1;
+      margin: 0 auto;
+      border-radius: 50%;
+      position: relative;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.18) 42%, rgba(148, 163, 184, 0.16) 72%, rgba(15, 23, 42, 0.1) 100%),
+        linear-gradient(150deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.12));
+      box-shadow:
+        inset 0 0 12px rgba(255, 255, 255, 0.4),
+        inset 0 -10px 26px rgba(15, 23, 42, 0.16),
+        0 12px 24px rgba(15, 23, 42, 0.16);
+    }
+
+    .lens-face::before {
+      content: "";
+      position: absolute;
+      left: 22%;
+      top: 16%;
+      width: 54%;
+      height: 22%;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      filter: blur(8px);
+      transform: rotate(-18deg);
+    }
+
+    .lens-face-enhanced {
+      border-color: rgba(156, 163, 175, 0.75);
+      box-shadow:
+        inset 0 0 10px rgba(255, 255, 255, 0.45),
+        inset 0 -8px 18px rgba(75, 85, 99, 0.22),
+        0 10px 22px rgba(75, 85, 99, 0.2);
+    }
+
+    .lens-edge-track {
+      height: 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel) 70%, transparent);
+      overflow: hidden;
+    }
+
+    .lens-side-view {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--panel-soft) 46%, var(--panel));
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .lens-side-label {
+      margin: 0;
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .lens-side-svg {
+      width: 100%;
+      max-width: 210px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .lens-side-note {
+      margin: 0;
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .lens-side-view.standard {
+      color: #6b7280;
+    }
+
+    .lens-side-view.enhanced {
+      color: #d1d5db;
+    }
+
+    body.dark .lens-side-view {
+      background: #231e1b;
+    }
+
+    body.dark .lens-side-view.standard {
+      color: #8f98a7;
+    }
+
+    body.dark .lens-side-view.enhanced {
+      color: #f2f4f7;
+    }
+
+    .lens-edge-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(30, 41, 59, 0.5), rgba(100, 116, 139, 0.8));
+    }
+
+    .lens-edge-fill.thin {
+      background: rgba(156, 163, 175, 0.9);
+    }
+
+    .lens-mm {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--text);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .lens-delta {
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel-soft) 55%, transparent);
+    }
+
+    .scene-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .scene-card {
+      position: relative;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      min-height: 280px;
+      background: #000;
+    }
+
+    .scene-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.96);
+    }
+
+    .scene-corridor {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.05) 40%, rgba(0, 0, 0, 0.32));
+      clip-path: polygon(34% 0%, 66% 0%, 58% 100%, 42% 100%);
+    }
+
+    .scene-corridor.premium {
+      clip-path: polygon(20% 0%, 80% 0%, 70% 100%, 30% 100%);
+    }
+
+    .scene-zone,
+    .scene-title {
+      position: absolute;
+      z-index: 2;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.58);
+      color: #fff;
+      font-size: 0.64rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 7px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: 700;
+    }
+
+    .scene-title {
+      top: 8px;
+      left: 8px;
+      letter-spacing: 0.05em;
+      font-size: 0.62rem;
+    }
+
+    .scene-zone.top {
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .scene-zone.mid {
+      top: 48%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .scene-zone.bottom {
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .seg-lens {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 310px;
+      background: #000;
+    }
+
+    .seg-lens img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .seg-row {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.45);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(7px);
+      background: rgba(0, 0, 0, 0.12);
+      color: #fff;
+      font-size: 0.64rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .seg-row.distance {
+      top: 0;
+      height: 48%;
+    }
+
+    .seg-row.intermediate {
+      top: 48%;
+      height: 28%;
+    }
+
+    .seg-row.near {
+      bottom: 0;
+      height: 24%;
+    }
+
+    .seg-row.blur-strong {
+      backdrop-filter: blur(13px);
+      background: rgba(0, 0, 0, 0.28);
+      color: rgba(255, 255, 255, 0.68);
+      font-style: italic;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 80;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(1060px, 96vw);
+      max-height: 92vh;
+      overflow: auto;
+      border-radius: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      animation: fade-up 0.22s ease;
+    }
+
+    .modal-head {
+      position: sticky;
+      top: 0;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .opti {
+      padding: 14px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 320px 1fr;
+    }
+
+    .opti-block {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel-soft);
+    }
+
+    .opti-block h4 {
+      margin: 0 0 8px;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .display {
+      width: 100%;
+      min-height: 86px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 8px;
+      margin-bottom: 8px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .key {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    .key.op {
+      background: color-mix(in srgb, var(--accent) 20%, var(--panel));
+    }
+
+    .key.eq {
+      background: var(--good);
+      color: #111827;
+      border-color: transparent;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .form-grid.two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 0.74rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      padding: 8px;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    .result {
+      margin-top: 8px;
+      border: 1px dashed var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.86rem;
+      color: var(--text);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      min-height: 38px;
+    }
+
+    .th-visual-wrap {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 8px;
+    }
+
+    .th-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--panel-soft) 72%, var(--panel));
+    }
+
+    .receipt {
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 10px;
+      padding: 8px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 0.78rem;
+      white-space: pre-wrap;
+      line-height: 1.35;
+    }
+
+    .opti-print-sheet {
+      display: none;
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .mobile-cats {
+        display: flex;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .search-wrap {
+        justify-self: stretch;
+        max-width: none;
+      }
+
+      .top-actions {
+        justify-content: flex-end;
+      }
+
+      .main {
+        padding: 10px;
+      }
+
+      .edu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .edu-library,
+      .edu-modal-grid,
+      .scene-grid,
+      .lens-pair {
+        grid-template-columns: 1fr;
+      }
+
+      .edu-visual-pane {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .opti {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+
+      body.opti-print-mode {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+
+      body.opti-print-mode .app,
+      body.opti-print-mode .modal {
+        display: none !important;
+      }
+
+      body.opti-print-mode .opti-print-sheet {
+        display: block !important;
+        padding: 20px;
+        color: #000000 !important;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      body.opti-print-mode .opti-print-sheet,
+      body.opti-print-mode .opti-print-sheet * {
+        color: #000000 !important;
+        text-shadow: none !important;
+        box-shadow: none !important;
+        border-color: #000000 !important;
+      }
+
+      body.opti-print-mode .opti-print-title {
+        margin: 0 0 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+
+      body.opti-print-mode .opti-print-receipt {
+        margin: 0;
+        white-space: pre-wrap;
+        font-size: 0.95rem;
+        line-height: 1.45;
+      }
+
+      body.opti-print-mode .opti-print-visual {
+        margin-top: 18px;
+      }
+
+      body.opti-print-mode .opti-print-visual h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      body.opti-print-mode .opti-print-visual img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #000000;
+      }
+
+      .top-actions,
+      .sidebar,
+      .mobile-cats,
+      .search-wrap,
+      #openOptiCalc {
+        display: none !important;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero,
+      .card,
+      .table {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo-video">
+          <video src="./public/palpricelist.mp4" autoplay loop muted playsinline></video>
+        </div>
+        <div>
+          <h1>PAL Optical</h1>
+          <p>Price List • Updated 10/14/25</p>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <span class="search-icon">🔎</span>
+        <input id="searchInput" type="text" placeholder="Search lenses, materials, or brands...">
+      </div>
+
+      <div class="top-actions">
+        <button id="themeToggle" class="btn" type="button">Dark</button>
+        <button id="openOptiCalc" class="btn primary" type="button">OptiCalc</button>
+        <button id="printBtn" class="icon-btn" type="button" title="Print">🖨</button>
+      </div>
+    </header>
+
+    <section class="layout">
+      <aside class="sidebar">
+        <p class="side-title">Categories</p>
+        <div id="categoryList" class="nav-list"></div>
+        <p class="side-title" style="margin-top: 16px;">Education</p>
+        <div class="nav-list">
+          <button class="nav-item" data-edu="true" type="button">Educational Materials <span>›</span></button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div id="mobileCategories" class="mobile-cats"></div>
+        <div id="contentArea"></div>
+      </main>
+    </section>
+  </div>
+
+  <section id="optiPrintSheet" class="opti-print-sheet" aria-hidden="true"></section>
+
+  <div id="optiModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>OptiCalc</h3>
+        <button id="closeOptiCalc" class="icon-btn" type="button" title="Close">✕</button>
+      </div>
+
+      <div class="opti">
+        <div class="stack">
+          <section class="opti-block">
+            <h4>Calculator</h4>
+            <div id="calcDisplay" class="display"></div>
+            <div class="keys" id="calcKeys"></div>
+            <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+              <button class="btn" data-retail="1.2" type="button">+20%</button>
+              <button class="btn" data-retail="1.3" type="button">+30%</button>
+              <button class="btn" data-retail="1.4" type="button">+40%</button>
+              <button class="btn" id="calcClear" type="button">Clear</button>
+            </div>
+          </section>
+
+          <section class="opti-block">
+            <h4>Session Receipt</h4>
+            <div id="receipt" class="receipt"></div>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <button class="btn" id="receiptClear" type="button">New Session</button>
+              <button class="btn" id="receiptPrint" type="button">Print</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="stack">
+          <section class="opti-block">
+            <h4>Decentration</h4>
+            <div class="form-grid">
+              <label>Frame A<input id="decFrameA" type="number" step="any"></label>
+              <label>Bridge (DBL)<input id="decBridge" type="number" step="any"></label>
+              <label>Patient PD<input id="decPd" type="number" step="any"></label>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+              <button id="decCalc" class="btn primary" type="button">Calculate</button>
+              <div id="decResult" class="result"></div>
+            </div>
+          </section>
+
+          <section class="opti-block">
+            <h4>MBS</h4>
+            <div class="form-grid">
+              <label>ED<input id="mbsEd" type="number" step="any"></label>
+              <label>Frame PD<input id="mbsFramePd" type="number" step="any"></label>
+              <label>Patient PD<input id="mbsPatientPd" type="number" step="any"></label>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+              <button id="mbsCalc" class="btn primary" type="button">Calculate MBS</button>
+              <div id="mbsResult" class="result"></div>
+            </div>
+          </section>
+
+          <section class="opti-block">
+            <h4>Thickness Estimate</h4>
+            <div class="form-grid three">
+              <label>Index
+                <select id="thIndex">
+                  <option value="1.5">1.50</option>
+                  <option value="1.53">1.53</option>
+                  <option value="1.59" selected>1.59</option>
+                  <option value="1.6">1.60</option>
+                  <option value="1.67">1.67</option>
+                  <option value="1.74">1.74</option>
+                </select>
+              </label>
+              <label>Frame Type
+                <select id="thFrameType">
+                  <option value="2.5" selected>Full Rim 2.5mm</option>
+                  <option value="1.21">Nylon 1.2mm</option>
+                  <option value="0">Drill Mount</option>
+                </select>
+              </label>
+              <label>Power<input id="thPower" type="number" step="any" placeholder="-3.00"></label>
+              <label>Diameter<input id="thDiameter" type="number" step="any" placeholder="70"></label>
+              <label>Decentration<input id="thDec" type="number" step="any" value="0"></label>
+              <label>Min CT<input id="thMin" type="number" step="any" value="1.5"></label>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+              <button id="thCalc" class="btn primary" type="button">Estimate</button>
+              <div id="thResult" class="result"></div>
+            </div>
+            <div class="th-visual-wrap">
+              <canvas id="thCanvas" class="th-canvas" width="420" height="250"></canvas>
+              <p class="edu-text" style="margin-top:8px;">Lens profile preview based on thickness inputs.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./data.js"></script>
+  <script>
+    (function () {
+      var LENS_DATA = Array.isArray(window.LENS_DATA) ? window.LENS_DATA : [];
+      var state = {
+        activeCategory: LENS_DATA[0] ? LENS_DATA[0].id : "",
+        searchQuery: "",
+        isDarkMode: false,
+        showOptiCalc: false,
+        educationSelectedId: null,
+        educationColorIdx: 0
+      };
+
+      var EDUCATIONAL_DATA = [
+        {
+          id: "polycarbonate",
+          title: "Polycarbonate",
+          iconLabel: "PC",
+          description: "Impact-resistant lens material with built-in UV protection for safety and active wear.",
+          benefits: [
+            "10x more impact-resistant than plastic",
+            "Built-in 100% UV protection",
+            "Thinner and lighter than CR-39",
+            "Ideal for kids, sports, and safety jobs"
+          ],
+          visualType: "lens-comparison",
+          prescription: "-5.00D",
+          beforeLabel: "Standard Plastic",
+          afterLabel: "Polycarbonate"
+        },
+        {
+          id: "high-index",
+          title: "High-Index Lenses",
+          iconLabel: "HI",
+          description: "High-index designs bend light more efficiently, reducing thickness and cosmetic magnification.",
+          benefits: [
+            "Up to 50% thinner than standard lenses",
+            "Lower edge thickness for high minus powers",
+            "Lighter for long-wear comfort",
+            "Cleaner look in slim and rimless frames"
+          ],
+          visualType: "lens-comparison",
+          prescription: "-5.00D",
+          beforeLabel: "Standard Lens",
+          afterLabel: "High-Index"
+        },
+        {
+          id: "ar-coating",
+          title: "Anti-Reflective Coating",
+          iconLabel: "AR",
+          description: "AR coatings reduce front and back reflections and improve night and screen comfort.",
+          benefits: [
+            "Cuts glare while driving at night",
+            "Improves contrast and clarity",
+            "Makes lenses look cleaner and less reflective",
+            "Premium stacks add hydrophobic and oleophobic layers"
+          ],
+          visualType: "slider",
+          beforeImage: "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?auto=format&fit=crop&q=80&w=1200",
+          afterImage: "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?auto=format&fit=crop&q=80&w=1200",
+          beforeLabel: "Without AR",
+          afterLabel: "With AR",
+          beforeFilter: "blur(2.7px) brightness(2.2) contrast(1.5) saturate(0.6)",
+          afterFilter: "brightness(0.95) contrast(1.2)",
+          colors: [
+            {
+              name: "Standard AR",
+              hex: "#cbd5e1",
+              image: "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?auto=format&fit=crop&q=80&w=1200",
+              beforeFilter: "blur(2.7px) brightness(2.2) contrast(1.5) saturate(0.6)",
+              afterFilter: "brightness(0.95) contrast(1.2)"
+            },
+            {
+              name: "Premium AR",
+              hex: "#3b82f6",
+              image: "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?auto=format&fit=crop&q=80&w=1200",
+              beforeFilter: "blur(2.7px) brightness(2.2) contrast(1.5) saturate(0.6)",
+              afterFilter: "brightness(1) contrast(1.28) saturate(1.08)",
+              showHydrophobic: true,
+              showOleophobic: true
+            }
+          ]
+        },
+        {
+          id: "blue-light",
+          title: "Blue Light Coating",
+          iconLabel: "BL",
+          description: "Digital filtering technology to reduce blue-violet exposure from screens and LEDs.",
+          benefits: [
+            "Reduces digital eye fatigue",
+            "Improves comfort during long device use",
+            "Helps reduce high-energy blue-violet exposure",
+            "Useful for office and computer-focused wearers"
+          ],
+          visualType: "slider",
+          beforeImage: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200",
+          afterImage: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200",
+          beforeLabel: "Unfiltered",
+          afterLabel: "Blue Filter",
+          beforeFilter: "brightness(1.16) saturate(1.5)",
+          afterFilter: "sepia(0.28) brightness(0.92)"
+        },
+        {
+          id: "polarization",
+          title: "Polarization",
+          iconLabel: "PL",
+          description: "Polarized filters block reflected glare from roads, water, and snow.",
+          benefits: [
+            "Eliminates reflected glare",
+            "Boosts contrast and comfort",
+            "Improves visual detail outdoors",
+            "Great for driving, fishing, and bright conditions"
+          ],
+          visualType: "slider",
+          beforeImage: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1200",
+          afterImage: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1200",
+          beforeLabel: "Standard Sun",
+          afterLabel: "Polarized",
+          beforeFilter: "brightness(2) contrast(0.55) blur(1px)",
+          afterFilter: "brightness(1) contrast(1.18) saturate(1.3)",
+          colors: [
+            { name: "Neutral Gray", hex: "#4b5563", image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1200", overlay: "#4b5563" },
+            { name: "High-Contrast Brown", hex: "#78350f", image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1200", overlay: "#78350f" },
+            { name: "G-15 Green", hex: "#064e3b", image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1200", overlay: "#064e3b" }
+          ]
+        },
+        {
+          id: "transitions",
+          title: "Transitions",
+          iconLabel: "TR",
+          description: "Photochromic technology that adapts from clear indoors to dark outdoors.",
+          benefits: [
+            "Two-in-one everyday convenience",
+            "100% UVA/UVB protection",
+            "Adaptive comfort in changing light",
+            "Available in multiple color families"
+          ],
+          visualType: "video",
+          colors: [
+            { name: "Grey", hex: "#374151", videoUrl: "./public/trans/transgrey.mp4" },
+            { name: "Brown", hex: "#451a03", videoUrl: "./public/trans/transbrown.mp4" },
+            { name: "Graphite Green", hex: "#064e3b", videoUrl: "./public/trans/transg15.mp4" },
+            { name: "Sapphire", hex: "#1d4ed8", videoUrl: "./public/trans/transblue.mp4" },
+            { name: "Amethyst", hex: "#7e22ce", videoUrl: "./public/trans/transpurp.mp4" },
+            { name: "Emerald", hex: "#059669", videoUrl: "./public/trans/transemerald.mp4" }
+          ]
+        },
+        {
+          id: "progressive",
+          title: "Progressive Lenses",
+          iconLabel: "PG",
+          description: "No-line multifocal design with smooth transition from distance to near.",
+          benefits: [
+            "No visible segment lines",
+            "Distance, intermediate, and near in one lens",
+            "Premium designs provide wider usable corridors",
+            "Reduced side distortion in advanced designs"
+          ],
+          visualType: "progressive-scene",
+          beforeLabel: "Standard Progressive",
+          afterLabel: "Premium Progressive",
+          beforeImage: "./public/pal2.JPG",
+          afterImage: "./public/pal2.JPG"
+        },
+        {
+          id: "bifocal",
+          title: "Lined Bifocal",
+          iconLabel: "BF",
+          description: "Two focal zones with a visible segment line dividing distance and near areas.",
+          benefits: [
+            "Clear distance and near zones",
+            "Cost-effective multifocal option",
+            "Predictable focal behavior",
+            "Simple adaptation for many wearers"
+          ],
+          visualType: "bifocal-comparison",
+          beforeImage: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1200"
+        },
+        {
+          id: "trifocal",
+          title: "Lined Trifocal",
+          iconLabel: "TF",
+          description: "Three focal zones for distance, intermediate, and near with visible segment lines.",
+          benefits: [
+            "Three distinct focal regions",
+            "Adds dedicated intermediate support",
+            "No peripheral swim effect",
+            "Reliable distance-to-near transitions"
+          ],
+          visualType: "trifocal-comparison",
+          beforeImage: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=1200"
+        }
+      ];
+
+      var els = {
+        body: document.body,
+        searchInput: document.getElementById("searchInput"),
+        categoryList: document.getElementById("categoryList"),
+        mobileCategories: document.getElementById("mobileCategories"),
+        contentArea: document.getElementById("contentArea"),
+        themeToggle: document.getElementById("themeToggle"),
+        printBtn: document.getElementById("printBtn"),
+        openOptiCalc: document.getElementById("openOptiCalc"),
+        optiModal: document.getElementById("optiModal"),
+        closeOptiCalc: document.getElementById("closeOptiCalc")
+      };
+
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function applyTheme() {
+        if (state.isDarkMode) {
+          els.body.classList.add("dark");
+          els.themeToggle.textContent = "Light";
+        } else {
+          els.body.classList.remove("dark");
+          els.themeToggle.textContent = "Dark";
+        }
+        localStorage.setItem("pal-dark-mode", state.isDarkMode ? "1" : "0");
+      }
+
+      function setCategory(id) {
+        state.activeCategory = id;
+        state.searchQuery = "";
+        if (id !== "educational-materials") {
+          state.educationSelectedId = null;
+          state.educationColorIdx = 0;
+        }
+        els.searchInput.value = "";
+        renderCategoryNav();
+        renderContent();
+      }
+
+      function getFilteredData() {
+        if (!state.searchQuery) {
+          return LENS_DATA.slice();
+        }
+        var q = state.searchQuery.toLowerCase();
+        return LENS_DATA
+          .map(function (cat) {
+            return {
+              id: cat.id,
+              title: cat.title,
+              description: cat.description,
+              items: cat.items.filter(function (item) {
+                return item.name.toLowerCase().indexOf(q) >= 0 ||
+                  (item.description || "").toLowerCase().indexOf(q) >= 0 ||
+                  cat.title.toLowerCase().indexOf(q) >= 0;
+              })
+            };
+          })
+          .filter(function (cat) { return cat.items.length > 0; });
+      }
+
+      function renderCategoryNav() {
+        var desktop = LENS_DATA.map(function (cat) {
+          var active = state.activeCategory === cat.id;
+          return "<button class=\"nav-item" + (active ? " active" : "") + "\" type=\"button\" data-cat=\"" + escapeHtml(cat.id) + "\">" +
+            "<span>" + escapeHtml(cat.title) + "</span><span>›</span></button>";
+        }).join("");
+        els.categoryList.innerHTML = desktop;
+
+        var mobile = LENS_DATA.map(function (cat) {
+          var active = state.activeCategory === cat.id;
+          return "<button class=\"chip" + (active ? " active" : "") + "\" type=\"button\" data-cat=\"" + escapeHtml(cat.id) + "\">" + escapeHtml(cat.title) + "</button>";
+        }).join("") +
+          "<button class=\"chip" + (state.activeCategory === "educational-materials" ? " active" : "") + "\" type=\"button\" data-cat=\"educational-materials\">Educational Materials</button>";
+        els.mobileCategories.innerHTML = mobile;
+
+        var eduDesktop = document.querySelector("[data-edu]");
+        if (eduDesktop) {
+          if (state.activeCategory === "educational-materials") {
+            eduDesktop.classList.add("active");
+          } else {
+            eduDesktop.classList.remove("active");
+          }
+        }
+      }
+
+      function renderRows(items) {
+        return items.map(function (item) {
+          return "<tr><td><p class=\"item-name\">" + escapeHtml(item.name) + "</p>" +
+            ((item.description ? "<p class=\"item-desc\">" + escapeHtml(item.description) + "</p>" : "")) +
+            "</td><td class=\"item-price\">" + escapeHtml(item.price) + "</td></tr>";
+        }).join("");
+      }
+
+      function renderLensSideProfile(edgeMm, isEnhanced) {
+        var edgeHeight = Math.max(22, Math.min(54, edgeMm * 4.6));
+        var centerHeight = Math.max(5, Math.min(12, edgeMm * (isEnhanced ? 0.7 : 0.9)));
+        var topOuter = 50 - (edgeHeight / 2);
+        var bottomOuter = 50 + (edgeHeight / 2);
+        var topCenter = 50 - (centerHeight / 2);
+        var bottomCenter = 50 + (centerHeight / 2);
+        var sideClass = isEnhanced ? "enhanced" : "standard";
+
+        return "<div class=\"lens-side-view " + sideClass + "\">" +
+          "<p class=\"lens-side-label\">Side View</p>" +
+          "<svg class=\"lens-side-svg\" viewBox=\"0 0 220 100\" aria-hidden=\"true\" focusable=\"false\">" +
+          "<path d=\"M 24 " + topOuter.toFixed(1) + " Q 74 " + topOuter.toFixed(1) + " 110 " + topCenter.toFixed(1) + " Q 146 " + topOuter.toFixed(1) + " 196 " + topOuter.toFixed(1) + " L 196 " + bottomOuter.toFixed(1) + " Q 146 " + bottomOuter.toFixed(1) + " 110 " + bottomCenter.toFixed(1) + " Q 74 " + bottomOuter.toFixed(1) + " 24 " + bottomOuter.toFixed(1) + " Z\" fill=\"currentColor\" fill-opacity=\"0.28\" stroke=\"currentColor\" stroke-width=\"2.5\"/>" +
+          "<path d=\"M 40 " + (topOuter + 4).toFixed(1) + " Q 82 " + (topOuter + 5).toFixed(1) + " 110 " + (topCenter + 1).toFixed(1) + "\" fill=\"none\" stroke=\"rgba(255,255,255,0.55)\" stroke-width=\"2\" stroke-linecap=\"round\"/>" +
+          "<line x1=\"205\" y1=\"" + topOuter.toFixed(1) + "\" x2=\"205\" y2=\"" + bottomOuter.toFixed(1) + "\" stroke=\"currentColor\" stroke-width=\"2\"/>" +
+          "<line x1=\"198\" y1=\"" + topOuter.toFixed(1) + "\" x2=\"212\" y2=\"" + topOuter.toFixed(1) + "\" stroke=\"currentColor\" stroke-width=\"2\"/>" +
+          "<line x1=\"198\" y1=\"" + bottomOuter.toFixed(1) + "\" x2=\"212\" y2=\"" + bottomOuter.toFixed(1) + "\" stroke=\"currentColor\" stroke-width=\"2\"/>" +
+          "<text x=\"187\" y=\"14\" font-size=\"11\" text-anchor=\"end\" fill=\"currentColor\">" + edgeMm.toFixed(1) + " mm</text>" +
+          "</svg>" +
+          "<p class=\"lens-side-note\">Edge thickness</p>" +
+          "</div>";
+      }
+
+      function renderCategorySection(cat) {
+        return "<section class=\"stack\" style=\"margin-bottom:16px;\">" +
+          "<div class=\"hero card\"><p class=\"hero-kicker\">Material Info</p><h2>" + escapeHtml(cat.title) + "</h2><p>" + escapeHtml(cat.description) + "</p></div>" +
+          "<table class=\"table\"><thead><tr><th>Lens Description</th><th>Price</th></tr></thead><tbody>" + renderRows(cat.items) + "</tbody></table>" +
+          "</section>";
+      }
+
+      function getEduMaterial(id) {
+        return EDUCATIONAL_DATA.find(function (item) { return item.id === id; }) || null;
+      }
+
+      function getEduColor(material) {
+        if (!material || !material.colors || !material.colors.length) {
+          return null;
+        }
+        var maxIdx = material.colors.length - 1;
+        var idx = Math.min(maxIdx, Math.max(0, state.educationColorIdx));
+        return material.colors[idx];
+      }
+
+      function renderEducationPalette(material) {
+        if (!material || !material.colors || !material.colors.length) {
+          return "";
+        }
+        var label = material.id === "ar-coating" ? "Coating Tier" : "Available Colors";
+        var buttons = material.colors.map(function (color, idx) {
+          var isActive = idx === state.educationColorIdx;
+          return "<button class=\"edu-color-btn" + (isActive ? " active" : "") + "\" type=\"button\" data-edu-color=\"" + idx + "\">" +
+            "<span class=\"edu-swatch\" style=\"background:" + escapeHtml(color.hex || "#999") + ";\"></span>" +
+            "<span>" + escapeHtml(color.name || ("Option " + (idx + 1))) + "</span></button>";
+        }).join("");
+        return "<div class=\"stack\"><p class=\"side-title\" style=\"margin:0;\">" + escapeHtml(label) + "</p><div class=\"edu-colors\">" + buttons + "</div></div>";
+      }
+
+      function renderEducationVisual(material) {
+        var color = getEduColor(material);
+        var beforeImage = (color && color.image) || material.beforeImage || "./public/pal2.JPG";
+        var afterImage = (color && color.image) || material.afterImage || "./public/pal2.JPG";
+        var beforeLabel = material.beforeLabel || "Before";
+        var afterLabel = (color && color.name) || material.afterLabel || "After";
+        var beforeFilter = (color && color.beforeFilter) || material.beforeFilter || "";
+        var afterFilter = (color && color.afterFilter) || material.afterFilter || "";
+        var overlayColor = color && color.overlay ? color.overlay : "";
+        var showHydrophobic = !!(color && color.showHydrophobic);
+        var showOleophobic = !!(color && color.showOleophobic);
+
+        if (material.visualType === "slider") {
+          return "<div class=\"stack\">" +
+            "<div class=\"before-after\">" +
+            "<img src=\"" + escapeHtml(afterImage) + "\" alt=\"After\" style=\"filter:" + escapeHtml(afterFilter) + ";\">" +
+            (overlayColor ? "<div class=\"edu-overlay\" style=\"background:" + escapeHtml(overlayColor) + ";\"></div>" : "") +
+            "<div class=\"before-layer\" id=\"eduBeforeLayer\"><img src=\"" + escapeHtml(beforeImage) + "\" alt=\"Before\" style=\"filter:" + escapeHtml(beforeFilter) + ";\">" +
+            (showHydrophobic ? "<div class=\"edu-water\"></div>" : "") +
+            (showOleophobic ? "<div class=\"edu-smudge\"></div>" : "") +
+            "</div>" +
+            "<span class=\"before-label\">" + escapeHtml(beforeLabel) + "</span><span class=\"after-label\">" + escapeHtml(afterLabel) + "</span></div>" +
+            "<input id=\"eduSliderRange\" class=\"ba-range\" type=\"range\" min=\"0\" max=\"100\" value=\"50\">" +
+            "</div>";
+        }
+
+        if (material.visualType === "lens-comparison") {
+          var isHighIndex = material.id === "high-index";
+          var standardMm = isHighIndex ? 9.0 : 8.2;
+          var enhancedMm = isHighIndex ? 5.0 : 5.8;
+          var reductionPct = Math.round((1 - (enhancedMm / standardMm)) * 100);
+          var enhancedNote = isHighIndex
+            ? "High-index bends light more efficiently, so edge bulk drops significantly on stronger prescriptions."
+            : "Polycarbonate is safer and noticeably slimmer than standard plastic while keeping excellent durability.";
+
+          return "<div class=\"lens-cutaway\">" +
+            "<div class=\"lens-row\"><div class=\"lens-row-head\"><span>Prescription</span><strong>" + escapeHtml(material.prescription || "-5.00D") + "</strong></div></div>" +
+            "<div class=\"lens-pair\">" +
+            "<div class=\"lens-card\">" +
+            "<p class=\"lens-card-title\">" + escapeHtml(material.beforeLabel || "Standard Plastic") + "</p>" +
+            "<div class=\"lens-face\"></div>" +
+            renderLensSideProfile(standardMm, false) +
+            "<p class=\"lens-mm\">Edge thickness approx " + standardMm.toFixed(1) + "mm</p>" +
+            "</div>" +
+            "<div class=\"lens-card\">" +
+            "<p class=\"lens-card-title\">" + escapeHtml(material.afterLabel || "Enhanced") + "</p>" +
+            "<div class=\"lens-face lens-face-enhanced\"></div>" +
+            renderLensSideProfile(enhancedMm, true) +
+            "<p class=\"lens-mm\">Edge thickness approx " + enhancedMm.toFixed(1) + "mm</p>" +
+            "</div>" +
+            "</div>" +
+            "<div class=\"lens-delta\">Thickness reduction: <strong>" + reductionPct + "%</strong> (" + standardMm.toFixed(1) + "mm to " + enhancedMm.toFixed(1) + "mm). " + escapeHtml(enhancedNote) + "</div>" +
+            "</div>";
+        }
+
+        if (material.visualType === "progressive-scene") {
+          return "<div class=\"stack\">" +
+            "<div class=\"scene-grid\">" +
+            "<div class=\"scene-card\"><img src=\"" + escapeHtml(material.beforeImage || "./public/pal2.JPG") + "\" alt=\"Standard\"><div class=\"scene-corridor\"></div><span class=\"scene-title\">" + escapeHtml(material.beforeLabel || "Standard") + "</span><span class=\"scene-zone top\">Distance</span><span class=\"scene-zone mid\">Intermediate</span><span class=\"scene-zone bottom\">Near</span></div>" +
+            "<div class=\"scene-card\"><img src=\"" + escapeHtml(material.afterImage || "./public/pal2.JPG") + "\" alt=\"Premium\"><div class=\"scene-corridor premium\"></div><span class=\"scene-title\">" + escapeHtml(material.afterLabel || "Premium") + "</span><span class=\"scene-zone top\">Distance</span><span class=\"scene-zone mid\">Intermediate</span><span class=\"scene-zone bottom\">Near</span></div>" +
+            "</div>" +
+            "<div class=\"edu-note\">Premium progressives widen the usable corridor and reduce side blur for intermediate and near tasks.</div></div>";
+        }
+
+        if (material.visualType === "bifocal-comparison" || material.visualType === "trifocal-comparison") {
+          var isTrifocal = material.visualType === "trifocal-comparison";
+          return "<div class=\"stack\"><div class=\"seg-lens\"><img src=\"" + escapeHtml(material.beforeImage || "./public/pal2.JPG") + "\" alt=\"Lined lens\">" +
+            "<div class=\"seg-row distance\">Distance Zone</div>" +
+            (isTrifocal ? "<div class=\"seg-row intermediate\">Intermediate Zone</div>" : "<div class=\"seg-row intermediate blur-strong\">Blurry Intermediate</div>") +
+            "<div class=\"seg-row near\">Near Zone</div></div>" +
+            "<div class=\"edu-note\">" +
+            (isTrifocal ? "Trifocal layouts include a dedicated middle zone for computer/intermediate tasks." : "Bifocals provide clear distance and near, but intermediate tasks are less clear.") +
+            "</div></div>";
+        }
+
+        if (material.visualType === "video") {
+          var videoUrl = color && color.videoUrl ? color.videoUrl : "./public/trans/transgrey.mp4";
+          return "<video id=\"eduVideo\" class=\"media\" src=\"" + escapeHtml(videoUrl) + "\" controls autoplay muted loop playsinline></video>";
+        }
+
+        return "<div class=\"edu-note\">No visual demo available.</div>";
+      }
+
+      function renderEducation() {
+        var selectedMaterial = getEduMaterial(state.educationSelectedId);
+        var cards = EDUCATIONAL_DATA.map(function (item) {
+          return "<button class=\"edu-tile\" type=\"button\" data-edu-open=\"" + escapeHtml(item.id) + "\">" +
+            "<span class=\"edu-icon\">" + escapeHtml(item.iconLabel || "ED") + "</span>" +
+            "<h3 class=\"edu-title\">" + escapeHtml(item.title) + "</h3>" +
+            "<p class=\"edu-text\">" + escapeHtml(item.description) + "</p>" +
+            "<span class=\"edu-link\">Learn More &rsaquo;</span></button>";
+        }).join("");
+
+        var html = "<section class=\"stack\">" +
+          "<div class=\"hero card\"><h2>Educational Materials</h2><p>Learn about lens materials and visual designs through interactive demos that match the old experience.</p></div>" +
+          "<div class=\"edu-library\">" + cards + "</div></section>";
+
+        if (selectedMaterial) {
+          html += "<div class=\"edu-modal open\" id=\"eduModal\">" +
+            "<div class=\"edu-modal-card\">" +
+            "<div class=\"modal-head\"><h3>" + escapeHtml(selectedMaterial.title) + "</h3><button class=\"icon-btn\" type=\"button\" data-edu-close=\"1\">X</button></div>" +
+            "<div class=\"edu-modal-grid\">" +
+            "<div class=\"edu-visual-pane\">" + renderEducationVisual(selectedMaterial) + renderEducationPalette(selectedMaterial) + "</div>" +
+            "<div class=\"edu-copy-pane\">" +
+            "<span class=\"edu-icon\">" + escapeHtml(selectedMaterial.iconLabel || "ED") + "</span>" +
+            "<h2 class=\"edu-title\" style=\"font-size:1.6rem;\">" + escapeHtml(selectedMaterial.title) + "</h2>" +
+            "<p class=\"edu-text\" style=\"font-size:0.9rem;\">" + escapeHtml(selectedMaterial.description) + "</p>" +
+            "<h3 class=\"side-title\" style=\"margin:2px 0;\">Key Benefits</h3>" +
+            "<ul class=\"edu-benefits\">" + selectedMaterial.benefits.map(function (benefit) {
+              return "<li>" + escapeHtml(benefit) + "</li>";
+            }).join("") + "</ul>" +
+            "<div class=\"edu-note\">Consult with an optician to match this option to the patient lifestyle, frame fit, and prescription.</div>" +
+            "</div></div></div></div>";
+        }
+
+        els.contentArea.innerHTML = html;
+
+        var openButtons = els.contentArea.querySelectorAll("[data-edu-open]");
+        openButtons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            state.educationSelectedId = btn.getAttribute("data-edu-open");
+            state.educationColorIdx = 0;
+            renderEducation();
+          });
+        });
+
+        var closeButton = els.contentArea.querySelector("[data-edu-close]");
+        if (closeButton) {
+          closeButton.addEventListener("click", function () {
+            state.educationSelectedId = null;
+            state.educationColorIdx = 0;
+            renderEducation();
+          });
+        }
+
+        var modal = document.getElementById("eduModal");
+        if (modal) {
+          modal.addEventListener("click", function (e) {
+            if (e.target === modal) {
+              state.educationSelectedId = null;
+              state.educationColorIdx = 0;
+              renderEducation();
+            }
+          });
+        }
+
+        var colorButtons = els.contentArea.querySelectorAll("[data-edu-color]");
+        colorButtons.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var next = Number(btn.getAttribute("data-edu-color"));
+            if (Number.isFinite(next)) {
+              state.educationColorIdx = next;
+              renderEducation();
+            }
+          });
+        });
+
+        var slider = document.getElementById("eduSliderRange");
+        var beforeLayer = document.getElementById("eduBeforeLayer");
+        if (slider && beforeLayer) {
+          slider.addEventListener("input", function () {
+            beforeLayer.style.width = slider.value + "%";
+          });
+        }
+
+        var eduVideo = document.getElementById("eduVideo");
+        if (eduVideo && typeof eduVideo.play === "function") {
+          eduVideo.play().catch(function () { return; });
+        }
+      }
+
+      function renderContent() {
+        if (state.activeCategory === "educational-materials") {
+          renderEducation();
+          return;
+        }
+
+        if (state.searchQuery) {
+          var filtered = getFilteredData();
+          var head = "<div class=\"search-header\"><h3>Search Results for \"" + escapeHtml(state.searchQuery) + "\"</h3><button id=\"clearSearch\" class=\"btn\" type=\"button\">Clear</button></div>";
+          if (!filtered.length) {
+            els.contentArea.innerHTML = head + "<div class=\"hero card\"><h2>No results found</h2><p>Try another keyword, lens family, or material term.</p></div>";
+          } else {
+            els.contentArea.innerHTML = head + filtered.map(renderCategorySection).join("");
+          }
+          var clear = document.getElementById("clearSearch");
+          if (clear) {
+            clear.addEventListener("click", function () {
+              state.searchQuery = "";
+              els.searchInput.value = "";
+              renderContent();
+            });
+          }
+          return;
+        }
+
+        var current = LENS_DATA.find(function (cat) { return cat.id === state.activeCategory; }) || LENS_DATA[0];
+        if (!current) {
+          els.contentArea.innerHTML = "<div class=\"hero card\"><h2>No Data</h2><p>Lens data is unavailable.</p></div>";
+          return;
+        }
+        els.contentArea.innerHTML = renderCategorySection(current);
+      }
+
+      function bindGlobalEvents() {
+        els.searchInput.addEventListener("input", function (e) {
+          state.searchQuery = e.target.value.trim();
+          renderContent();
+        });
+
+        els.themeToggle.addEventListener("click", function () {
+          state.isDarkMode = !state.isDarkMode;
+          applyTheme();
+          if (typeof window.__redrawThicknessVisualizer === "function") {
+            window.__redrawThicknessVisualizer();
+          }
+        });
+
+        els.printBtn.addEventListener("click", function () {
+          window.print();
+        });
+
+        els.openOptiCalc.addEventListener("click", function () {
+          state.showOptiCalc = true;
+          els.optiModal.classList.add("open");
+          els.optiModal.setAttribute("aria-hidden", "false");
+        });
+
+        els.closeOptiCalc.addEventListener("click", function () {
+          state.showOptiCalc = false;
+          els.optiModal.classList.remove("open");
+          els.optiModal.setAttribute("aria-hidden", "true");
+        });
+
+        els.optiModal.addEventListener("click", function (e) {
+          if (e.target === els.optiModal) {
+            state.showOptiCalc = false;
+            els.optiModal.classList.remove("open");
+            els.optiModal.setAttribute("aria-hidden", "true");
+          }
+        });
+
+        document.addEventListener("click", function (e) {
+          var catBtn = e.target.closest("[data-cat]");
+          var eduBtn = e.target.closest("[data-edu]");
+          if (catBtn) {
+            setCategory(catBtn.getAttribute("data-cat"));
+          }
+          if (eduBtn) {
+            setCategory("educational-materials");
+            renderCategoryNav();
+          }
+        });
+      }
+
+      function initOptiCalc() {
+        var calcDisplay = document.getElementById("calcDisplay");
+        var calcKeys = document.getElementById("calcKeys");
+        var receipt = document.getElementById("receipt");
+        var receiptItems = ["--- Session Started ---"];
+        var displayStr = "";
+        var thCanvas = document.getElementById("thCanvas");
+        var optiPrintSheet = document.getElementById("optiPrintSheet");
+        var lastThicknessParams = null;
+
+        var keyLayout = ["7", "8", "9", "/", "4", "5", "6", "*", "1", "2", "3", "-", "0", ".", "(", ")", "C", "=", "+", "%"];
+
+        function addReceipt(line) {
+          var t = new Date();
+          var stamp = t.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          receiptItems.push("[" + stamp + "] " + line);
+          receipt.textContent = receiptItems.join("\n");
+          receipt.scrollTop = receipt.scrollHeight;
+        }
+
+        function renderDisplay(text) {
+          calcDisplay.textContent = text || "0";
+        }
+
+        function safeEval(raw) {
+          var sanitized = raw.replace(/[^-+*/.0-9()%]/g, "");
+          if (!sanitized) return 0;
+          var normalized = sanitized.replace(/%/g, "/100");
+          return Function("return (" + normalized + ");")();
+        }
+
+        function cleanupOptiPrintMode() {
+          document.body.classList.remove("opti-print-mode");
+          if (optiPrintSheet) {
+            optiPrintSheet.innerHTML = "";
+            optiPrintSheet.setAttribute("aria-hidden", "true");
+          }
+        }
+
+        function printOptiReceipt() {
+          if (!optiPrintSheet) {
+            window.print();
+            return;
+          }
+
+          var receiptText = receipt ? receipt.textContent.trim() : "";
+          var printHtml = "<h2 class=\"opti-print-title\">Session Receipt</h2>" +
+            "<pre class=\"opti-print-receipt\">" + escapeHtml(receiptText || "--- Session Started ---") + "</pre>";
+
+          if (lastThicknessParams && thCanvas) {
+            printHtml += "<section class=\"opti-print-visual\"><h3>Lens Thickness Picture</h3><img src=\"" + thCanvas.toDataURL("image/png") + "\" alt=\"Lens thickness picture\"></section>";
+          }
+
+          optiPrintSheet.innerHTML = printHtml;
+          optiPrintSheet.setAttribute("aria-hidden", "false");
+          document.body.classList.add("opti-print-mode");
+          window.print();
+        }
+
+        window.addEventListener("afterprint", cleanupOptiPrintMode);
+
+        function drawThicknessPlaceholder(message) {
+          if (!thCanvas) return;
+          var ctx = thCanvas.getContext("2d");
+          if (!ctx) return;
+
+          ctx.clearRect(0, 0, thCanvas.width, thCanvas.height);
+          ctx.fillStyle = state.isDarkMode ? "#050505" : "#f8fafc";
+          ctx.fillRect(0, 0, thCanvas.width, thCanvas.height);
+
+          ctx.strokeStyle = state.isDarkMode ? "rgba(255,255,255,0.2)" : "rgba(15,23,42,0.16)";
+          ctx.setLineDash([4, 4]);
+          ctx.strokeRect(14, 14, thCanvas.width - 28, thCanvas.height - 28);
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = state.isDarkMode ? "#ffffff" : "#334155";
+          ctx.font = "600 14px Segoe UI";
+          ctx.fillText(message || "Enter thickness inputs and click Estimate", 24, 34);
+        }
+
+        function drawThicknessVisualizer(params) {
+          if (!thCanvas || !params) return;
+          var ctx = thCanvas.getContext("2d");
+          if (!ctx) return;
+
+          var finalThickness = params.finalThickness;
+          var power = params.power;
+          var frameType = params.frameType;
+          var index = params.index;
+          var diameter = params.diameter;
+          var dec = params.decentration;
+          var isPlus = power > 0;
+
+          ctx.clearRect(0, 0, thCanvas.width, thCanvas.height);
+          ctx.fillStyle = state.isDarkMode ? "#000000" : "#f8fafc";
+          ctx.fillRect(0, 0, thCanvas.width, thCanvas.height);
+
+          var faceColor = state.isDarkMode ? "#ffffff" : "#444444";
+          var lensFill = state.isDarkMode ? "rgba(255,255,255,0.18)" : "rgba(100,116,139,0.25)";
+          var lensStroke = state.isDarkMode ? "#ffffff" : "#1e293b";
+          var frameColor = state.isDarkMode ? "#e2e8f0" : "#0f172a";
+
+          ctx.strokeStyle = faceColor;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(245, 20);
+          ctx.bezierCurveTo(262, 50, 254, 80, 228, 102);
+          ctx.bezierCurveTo(250, 122, 266, 148, 262, 168);
+          ctx.bezierCurveTo(248, 176, 236, 184, 234, 195);
+          ctx.bezierCurveTo(247, 206, 250, 216, 236, 224);
+          ctx.bezierCurveTo(210, 238, 182, 244, 158, 250);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.ellipse(196, 96, 13, 7, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(199, 96, 2.4, 0, Math.PI * 2);
+          ctx.fillStyle = faceColor;
+          ctx.fill();
+
+          var lensScale = 5;
+          var lensThickPx = Math.max(3, finalThickness * lensScale);
+          var frontX = 286;
+          var topY = 72;
+          var lensHeight = 108;
+          var backX = frontX - lensThickPx;
+
+          ctx.fillStyle = lensFill;
+          ctx.strokeStyle = lensStroke;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(frontX, topY);
+          ctx.quadraticCurveTo(frontX + 4, topY + lensHeight / 2, frontX, topY + lensHeight);
+          ctx.lineTo(backX, topY + lensHeight);
+          ctx.quadraticCurveTo(backX - (isPlus ? 10 : 5), topY + lensHeight / 2, backX, topY);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          var isDrill = frameType === 0;
+          if (isDrill) {
+            ctx.fillStyle = frameColor;
+            ctx.fillRect(backX - 2, topY + 24, lensThickPx + 5, 6);
+            ctx.beginPath();
+            ctx.arc(frontX + 2, topY + 27, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(backX - 2, topY + 27, 1.6, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            var frameThicknessPx = frameType === 1.21 ? 4 : 7;
+            ctx.fillStyle = frameColor;
+            ctx.fillRect(frontX - frameThicknessPx, topY - 5, frameThicknessPx * 2, lensHeight + 10);
+          }
+
+          ctx.fillStyle = frameColor;
+          ctx.fillRect(64, topY + 24, frontX - 64, 4);
+
+          ctx.fillStyle = state.isDarkMode ? "#ffffff" : "#0f172a";
+          ctx.font = "600 13px Segoe UI";
+          ctx.fillText("Estimated Edge Thickness: " + finalThickness.toFixed(2) + "mm", 16, 24);
+          ctx.font = "12px Segoe UI";
+          ctx.fillText("Power " + power.toFixed(2) + "D | Index " + index.toFixed(2) + " | Dia " + diameter.toFixed(1) + "mm | Dec " + dec.toFixed(1) + "mm", 16, 44);
+        }
+
+        keyLayout.forEach(function (key) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "key" + ((/[/*+\-%]/.test(key) || key === "=") ? " op" : "") + (key === "=" ? " eq" : "");
+          btn.textContent = key;
+          btn.addEventListener("click", function () {
+            if (key === "C") {
+              displayStr = "";
+              renderDisplay(displayStr);
+              return;
+            }
+            if (key === "=") {
+              try {
+                var result = safeEval(displayStr);
+                addReceipt(displayStr + " = " + result);
+                displayStr = String(result);
+                renderDisplay(displayStr);
+              } catch (_e) {
+                displayStr = "Error";
+                renderDisplay(displayStr);
+              }
+              return;
+            }
+            if (displayStr === "Error") {
+              displayStr = "";
+            }
+            displayStr += key;
+            renderDisplay(displayStr);
+          });
+          calcKeys.appendChild(btn);
+        });
+
+        document.getElementById("calcClear").addEventListener("click", function () {
+          displayStr = "";
+          renderDisplay(displayStr);
+        });
+
+        document.querySelectorAll("[data-retail]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var mul = Number(btn.getAttribute("data-retail"));
+            try {
+              var base = Number(safeEval(displayStr));
+              if (!Number.isFinite(base)) return;
+              var total = Number((base * mul).toFixed(2));
+              var label = "Retail (x" + mul.toFixed(1) + ")";
+              var extra = Math.abs(total - base).toFixed(2);
+              displayStr = "Before: $" + base + "\n" + label + ": $" + extra + "\nTotal: $" + total.toFixed(2);
+              calcDisplay.textContent = displayStr;
+              addReceipt(base + " " + label + " => " + total.toFixed(2));
+            } catch (_e) {
+              displayStr = "Error";
+              renderDisplay(displayStr);
+            }
+          });
+        });
+
+        document.getElementById("receiptClear").addEventListener("click", function () {
+          receiptItems = ["--- Session Started ---"];
+          receipt.textContent = receiptItems.join("\n");
+        });
+
+        document.getElementById("receiptPrint").addEventListener("click", function () {
+          printOptiReceipt();
+        });
+
+        document.getElementById("decCalc").addEventListener("click", function () {
+          var a = Number(document.getElementById("decFrameA").value);
+          var b = Number(document.getElementById("decBridge").value);
+          var pd = Number(document.getElementById("decPd").value);
+          if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(pd)) return;
+          var framePd = a + b;
+          var dec = (framePd - pd) / 2;
+          document.getElementById("decResult").textContent = "Decentration / eye: " + dec.toFixed(2) + " mm";
+          document.getElementById("mbsFramePd").value = framePd.toFixed(1);
+          document.getElementById("mbsPatientPd").value = pd.toFixed(1);
+          document.getElementById("thDec").value = Math.abs(dec).toFixed(2);
+          addReceipt("Decentration = " + dec.toFixed(2) + "mm");
+        });
+
+        document.getElementById("mbsCalc").addEventListener("click", function () {
+          var ed = Number(document.getElementById("mbsEd").value);
+          var framePd = Number(document.getElementById("mbsFramePd").value);
+          var patientPd = Number(document.getElementById("mbsPatientPd").value);
+          if (!Number.isFinite(ed) || !Number.isFinite(framePd) || !Number.isFinite(patientPd)) return;
+          var mbs = ed + (framePd - patientPd) + 2;
+          document.getElementById("mbsResult").textContent = "MBS: " + mbs.toFixed(1) + " mm";
+          addReceipt("MBS = " + mbs.toFixed(1) + "mm");
+        });
+
+        document.getElementById("thCalc").addEventListener("click", function () {
+          var n = Number(document.getElementById("thIndex").value);
+          var p = Number(document.getElementById("thPower").value);
+          var d = Number(document.getElementById("thDiameter").value);
+          var dec = Number(document.getElementById("thDec").value || 0);
+          var mt = Number(document.getElementById("thMin").value);
+          var frameType = Number(document.getElementById("thFrameType").value);
+          if (!Number.isFinite(n) || !Number.isFinite(p) || !Number.isFinite(d) || !Number.isFinite(mt)) {
+            drawThicknessPlaceholder("Enter valid thickness values first");
+            return;
+          }
+          var r = (d / 2) + Math.abs(dec);
+          var sag = (Math.pow(r, 2) * Math.abs(p)) / (2000 * (n - 1));
+          var finalThickness = sag + mt;
+          document.getElementById("thResult").textContent = "Estimated edge thickness: " + finalThickness.toFixed(2) + " mm";
+          addReceipt("Thickness est. = " + finalThickness.toFixed(2) + "mm");
+
+          lastThicknessParams = {
+            finalThickness: finalThickness,
+            power: p,
+            frameType: frameType,
+            index: n,
+            diameter: d,
+            decentration: dec
+          };
+          drawThicknessVisualizer(lastThicknessParams);
+        });
+
+        window.__redrawThicknessVisualizer = function () {
+          if (lastThicknessParams) {
+            drawThicknessVisualizer(lastThicknessParams);
+          } else {
+            drawThicknessPlaceholder();
+          }
+        };
+
+        receipt.textContent = receiptItems.join("\n");
+        renderDisplay(displayStr);
+        drawThicknessPlaceholder();
+      }
+
+      function init() {
+        state.isDarkMode = localStorage.getItem("pal-dark-mode") === "1";
+        applyTheme();
+        renderCategoryNav();
+        renderContent();
+        bindGlobalEvents();
+        initOptiCalc();
+
+        if ("serviceWorker" in navigator) {
+          window.addEventListener("load", function () {
+            navigator.serviceWorker.register("./public/sw.js").catch(function () { return; });
+          });
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+
+</html>
