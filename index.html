@@ -3452,6 +3452,15 @@
           var lensRoot = new THREE.Group();
           scene.add(lensRoot);
 
+          var headMetrics = {
+            width: 0.9,
+            height: 1.2,
+            depth: 0.85,
+            eyeY: 0.11,
+            frontZ: 0.3,
+            lensHalfSpacing: 0.22
+          };
+
           var headMaterial = new THREE.MeshStandardMaterial({ color: 0x8b929e, roughness: 0.66, metalness: 0.02 });
           var frameMaterial = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.42, metalness: 0.25 });
 
@@ -3499,6 +3508,20 @@
             });
           }
 
+          function updateHeadMetricsFromBounds(bounds) {
+            if (!bounds) return;
+            var size = bounds.getSize(new THREE.Vector3());
+            headMetrics.width = Math.max(0.56, size.x || 0.9);
+            headMetrics.height = Math.max(0.78, size.y || 1.2);
+            headMetrics.depth = Math.max(0.48, size.z || 0.85);
+            headMetrics.eyeY = bounds.min.y + headMetrics.height * 0.62;
+            headMetrics.frontZ = bounds.max.z - headMetrics.depth * 0.035;
+            headMetrics.lensHalfSpacing = THREE.MathUtils.clamp(headMetrics.width * 0.24, 0.17, 0.3);
+
+            controls.target.set(0, headMetrics.eyeY, 0);
+            controls.update();
+          }
+
           function renderThickness(params, isDark) {
             if (!params) return;
             applyTheme(isDark);
@@ -3509,8 +3532,13 @@
             var diameter = Number(params.diameter || 70);
 
             var depth = THREE.MathUtils.clamp(0.012 + thickness * 0.0024, 0.016, 0.048);
-            var radius = THREE.MathUtils.clamp(0.14 + (diameter - 60) * 0.003, 0.14, 0.24);
+            var radiusByDiameter = THREE.MathUtils.clamp(0.14 + (diameter - 60) * 0.003, 0.14, 0.24);
+            var radiusByHead = THREE.MathUtils.clamp(headMetrics.width * 0.155, 0.13, 0.23);
+            var radius = Math.min(radiusByDiameter, radiusByHead);
             var frameTube = frameType === 0 ? 0.004 : (frameType === 1.21 ? 0.006 : 0.009);
+            var lensY = headMetrics.eyeY;
+            var lensZ = headMetrics.frontZ - depth * 0.44;
+            var lensHalfSpacing = THREE.MathUtils.clamp(headMetrics.lensHalfSpacing, radius * 1.02, headMetrics.width * 0.33);
 
             var lensMatLeft = makeLensMaterial(thickness);
             var lensMatRight = makeLensMaterial(thickness);
@@ -3518,7 +3546,7 @@
             [-1, 1].forEach(function (side) {
               var lens = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, depth, 64), side < 0 ? lensMatLeft : lensMatRight);
               lens.rotation.z = Math.PI / 2;
-              lens.position.set(side * 0.22, 0.11, 0.295);
+              lens.position.set(side * lensHalfSpacing, lensY, lensZ);
               lensRoot.add(lens);
 
               if (frameType !== 0) {
@@ -3530,8 +3558,9 @@
             });
 
             if (frameType !== 0) {
-              var bridge = new THREE.Mesh(new THREE.BoxGeometry(0.08, frameTube * 1.5, frameTube * 2.8), frameMaterial.clone());
-              bridge.position.set(0, 0.115, 0.34);
+              var bridgeWidth = THREE.MathUtils.clamp((lensHalfSpacing - radius * 0.88) * 2, 0.04, 0.12);
+              var bridge = new THREE.Mesh(new THREE.BoxGeometry(bridgeWidth, frameTube * 1.5, frameTube * 2.8), frameMaterial.clone());
+              bridge.position.set(0, lensY + radius * 0.05, lensZ + depth * 0.28);
               lensRoot.add(bridge);
             }
 
@@ -3571,14 +3600,39 @@
             });
             if (!meshCount) return false;
 
-            var bounds = new THREE.Box3().setFromObject(obj);
-            var size = bounds.getSize(new THREE.Vector3());
-            var center = bounds.getCenter(new THREE.Vector3());
+            obj.rotation.set(0, 0, 0);
+            obj.position.set(0, 0, 0);
+            obj.updateMatrixWorld(true);
+
+            var preBounds = new THREE.Box3().setFromObject(obj);
+            var preSize = preBounds.getSize(new THREE.Vector3());
+            if (preSize.z > preSize.y * 1.08 && preSize.z >= preSize.x) {
+              obj.rotation.x = -Math.PI / 2;
+              obj.updateMatrixWorld(true);
+              preBounds = new THREE.Box3().setFromObject(obj);
+              preSize = preBounds.getSize(new THREE.Vector3());
+            }
+
+            var center = preBounds.getCenter(new THREE.Vector3());
             obj.position.sub(center);
-            var maxSide = Math.max(size.x, size.y, size.z) || 1;
+            obj.updateMatrixWorld(true);
+
+            var orientedBounds = new THREE.Box3().setFromObject(obj);
+            if (Math.abs(orientedBounds.min.z) > Math.abs(orientedBounds.max.z) * 1.07) {
+              obj.rotation.y += Math.PI;
+              obj.updateMatrixWorld(true);
+              orientedBounds = new THREE.Box3().setFromObject(obj);
+            }
+
+            var orientedSize = orientedBounds.getSize(new THREE.Vector3());
+            var maxSide = Math.max(orientedSize.x, orientedSize.y, orientedSize.z) || 1;
             var scale = 1.55 / maxSide;
             obj.scale.setScalar(scale);
             obj.position.y -= 0.28;
+            obj.updateMatrixWorld(true);
+
+            var finalBounds = new THREE.Box3().setFromObject(obj);
+            updateHeadMetricsFromBounds(finalBounds);
 
             clearHeadMeshes();
             headRoot.add(obj);
@@ -3594,6 +3648,7 @@
             fallbackHead.scale.set(1, 1.15, 0.92);
             fallbackHead.position.set(0, 0.03, 0);
             headRoot.add(fallbackHead);
+            updateHeadMetricsFromBounds(new THREE.Box3().setFromObject(fallbackHead));
             if (noteEl) {
               noteEl.textContent = "Could not reach head.glb - showing built-in 3D head";
             }
