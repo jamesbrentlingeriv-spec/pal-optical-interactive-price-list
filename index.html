@@ -2758,7 +2758,7 @@
   <script src="./data.js"></script>
   <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
   <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
   <script>
     (function () {
       var LENS_DATA = Array.isArray(window.LENS_DATA) ? window.LENS_DATA : [];
@@ -3405,7 +3405,7 @@
         }
 
         function createThickness3DViewer(container, noteEl, fallbackCanvas) {
-          if (!container || !window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) {
+              if (!container || !window.THREE || !THREE.OBJLoader || !THREE.OrbitControls) {
             if (fallbackCanvas) {
               fallbackCanvas.style.display = "block";
             }
@@ -3650,21 +3650,21 @@
             headRoot.add(fallbackHead);
             updateHeadMetricsFromBounds(new THREE.Box3().setFromObject(fallbackHead));
             if (noteEl) {
-              noteEl.textContent = "Could not reach head.glb - showing built-in 3D head";
+                  noteEl.textContent = "Could not reach head.obj - showing built-in 3D head";
             }
           }
 
-          var loader = new THREE.GLTFLoader();
+              var loader = new THREE.OBJLoader();
           var pathBase = (window.location && window.location.pathname)
             ? window.location.pathname.replace(/[^\/]*$/, "")
             : "/";
           var rawCandidates = [
-            "./head.glb",
-            "head.glb",
-            pathBase + "head.glb",
-            "/head.glb",
-            "./public/head.glb",
-            "public/head.glb"
+                "./head.obj",
+                "head.obj",
+                pathBase + "head.obj",
+                "/head.obj",
+                "./public/head.obj",
+                "public/head.obj"
           ];
           var headCandidates = rawCandidates.filter(function (u, idx, arr) {
             return !!u && arr.indexOf(u) === idx;
@@ -3681,8 +3681,7 @@
               noteEl.textContent = "Loading 3D head model...";
             }
 
-            loader.load(url, function (gltf) {
-              var obj = gltf && (gltf.scene || (gltf.scenes && gltf.scenes[0])) ? (gltf.scene || gltf.scenes[0]) : null;
+                loader.load(url, function (obj) {
               if (mountHeadObject(obj)) {
                 if (noteEl) {
                   noteEl.textContent = "Drag to rotate head - Scroll to zoom";
