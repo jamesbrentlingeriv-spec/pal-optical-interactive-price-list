@@ -11,6 +11,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="icon" href="./favicon.ico">
   <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg: #edf1f5;
@@ -24,6 +29,7 @@
       --good: #9ca3af;
       --shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
       --rainbow-flow: linear-gradient(120deg, #000000, #111111, #1a1a1a, #050505, #000000, #050505, #1a1a1a, #000000);
+      --sapphire-flow: linear-gradient(115deg, #031525, #0b3d91, #1683ff, #59b7ff, #0e5fca, #062b5b, #031525);
     }
 
     body.dark {
@@ -38,6 +44,7 @@
       --good: #d4d4d8;
       --shadow: 0 10px 40px rgba(0, 0, 0, 0.42);
       --rainbow-flow: linear-gradient(120deg, #ffffff, #f5f5f5, #e5e5e5, #ffffff, #fafafa, #ffffff, #e5e5e5, #ffffff);
+      --sapphire-flow: linear-gradient(115deg, #03111e, #0b2e70, #1268d7, #54aaf7, #0f5bc1, #08264b, #03111e);
     }
 
     * {
@@ -85,6 +92,20 @@
     }
 
     @keyframes rainbow-flow {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes sapphire-flow {
       0% {
         background-position: 0% 50%;
       }
@@ -434,7 +455,11 @@
     }
 
     .nav-item.active::before {
+      padding: 3px;
       opacity: 1;
+      background: var(--rainbow-flow);
+      background-size: 320% 320%;
+      animation: rainbow-flow 2.4s linear infinite;
     }
 
     .nav-list .nav-item:nth-child(6n + 1) {
@@ -508,7 +533,11 @@
     }
 
     .chip.active::before {
+      padding: 3px;
       opacity: 1;
+      background: var(--rainbow-flow);
+      background-size: 320% 320%;
+      animation: rainbow-flow 2.4s linear infinite;
     }
 
     .chip.active::after {
@@ -529,6 +558,13 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       box-shadow: none;
+    }
+
+    .card::before {
+      padding: 3px;
+      background: var(--rainbow-flow);
+      background-size: 320% 320%;
+      animation: rainbow-flow 2.4s linear infinite;
     }
 
     .hero {
@@ -1397,144 +1433,492 @@
       text-transform: uppercase;
     }
 
+    .opti-calc {
+      width: min(1120px, 90vw);
+      max-height: min(860px, 94vh);
+      border-radius: 28px;
+      background: #fbfbfd;
+      border: 1px solid #d8dee7;
+      box-shadow: 0 28px 80px rgba(15, 23, 42, 0.2);
+      color: #0f172a;
+      overflow: auto;
+    }
+
+    .opti-calc .modal-head {
+      position: sticky;
+      top: 0;
+      background: #fbfbfd;
+      border-bottom: 1px solid #e3e7ee;
+      padding: 20px 28px;
+      z-index: 3;
+    }
+
+    .opti-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .opti-title-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      color: #111111;
+    }
+
+    .opti-calc .modal-head h3 {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #111111;
+    }
+
+    .opti-calc .icon-btn {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      background: transparent;
+      border-radius: 999px;
+      color: #111111;
+      font-size: 1.4rem;
+    }
+
     .opti {
-      padding: 14px;
+      padding: 16px;
       display: grid;
       gap: 14px;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: minmax(360px, 0.98fr) minmax(320px, 0.92fr);
+      background: #fbfbfd;
+    }
+
+    .opti-column {
+      display: grid;
+      gap: 16px;
+      align-content: start;
     }
 
     .opti-block {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-      background: var(--panel-soft);
+      border: 1px solid #eceff4;
+      border-radius: 20px;
+      padding: 14px;
+      background: #f5f6fa;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
     }
 
-    .opti-block h4 {
-      margin: 0 0 8px;
-      font-size: 0.82rem;
+    .opti-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 0.78rem;
+      font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: #9099ab;
+    }
+
+    .opti-heading svg {
+      flex: 0 0 auto;
+      color: #111111;
+    }
+
+    .calc-shell {
+      border-radius: 18px;
+      background: #eceff5;
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
     }
 
     .display {
       width: 100%;
       min-height: 86px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--panel);
-      color: var(--text);
-      padding: 8px;
+      border: 0;
+      border-radius: 16px;
+      background: transparent;
+      color: #0f172a;
+      padding: 10px 4px 8px;
       margin-bottom: 8px;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
+      text-align: right;
+    }
+
+    .opti-retail-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .opti-retail-btn,
+    .key,
+    .opti-action,
+    .receipt-mini-btn {
+      border-radius: 12px;
+      border: 1px solid #dfe5ee;
+      background: #ffffff;
+      color: #111111;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+
+    .opti-retail-btn {
+      min-height: 30px;
+      padding: 8px 6px;
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .opti-retail-btn.alert {
+      background: #f8e1e6;
+      color: #d21935;
+      border-color: #f2d4da;
     }
 
     .keys {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
     }
 
     .key {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-      padding: 8px;
+      min-height: 34px;
+      padding: 10px 8px;
       text-align: center;
       cursor: pointer;
-      font-weight: 700;
-      font-size: 0.84rem;
+      font-weight: 800;
+      font-size: 1rem;
     }
 
     .key.op {
-      background: color-mix(in srgb, var(--accent) 20%, var(--panel));
+      background: #ffffff;
     }
 
     .key.eq {
-      background: var(--good);
-      color: #111827;
-      border-color: transparent;
+      background: #000000;
+      color: #ffffff;
+      border-color: #000000;
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .form-grid.two {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    label {
+    .opti-calc label {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      font-size: 0.74rem;
-      color: var(--muted);
+      gap: 8px;
+      font-size: 0.63rem;
+      color: #99a2b4;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    input,
-    select,
-    textarea {
+    .opti-calc input,
+    .opti-calc select,
+    .opti-calc textarea {
       width: 100%;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      color: var(--text);
-      padding: 8px;
-      font-size: 0.84rem;
+      min-height: 40px;
+      border-radius: 12px;
+      border: 1px solid #edf1f5;
+      background: #ffffff;
+      color: #0f172a;
+      padding: 10px 12px;
+      font-size: 0.85rem;
       outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .opti-calc input:focus,
+    .opti-calc select:focus,
+    .opti-calc textarea:focus {
+      border-color: #c7d0db;
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+    }
+
+    .opti-hidden {
+      display: none;
+    }
+
+    .opti-action {
+      width: 100%;
+      min-height: 28px;
+      margin-top: 12px;
+      padding: 9px 14px;
+      border-radius: 9px;
+      background: #000000;
+      color: #ffffff;
+      border-color: #000000;
+      font-size: 0.73rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     .result {
       margin-top: 8px;
-      border: 1px dashed var(--line);
-      background: var(--panel);
-      border-radius: 8px;
-      padding: 8px;
-      font-size: 0.86rem;
-      color: var(--text);
+      min-height: 24px;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      font-size: 0.79rem;
+      color: #475569;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      min-height: 38px;
+      line-height: 1.4;
+    }
+
+    .opti-block-highlight {
+      box-shadow: inset 3px 3px 0 #ffaf08, inset -3px -3px 0 #39df49;
+      background: #ffffff;
+    }
+
+    .opti-block-profile .result {
+      margin-top: 10px;
+      font-weight: 700;
     }
 
     .th-visual-wrap {
       margin-top: 10px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--panel);
+      border: 1px solid #e9edf3;
+      border-radius: 16px;
+      background: #ffffff;
       padding: 8px;
+      min-height: 210px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .th-scene {
+      width: 100%;
+      height: 270px;
+      border-radius: 12px;
+      background: #ffffff;
+      cursor: grab;
+    }
+
+    .th-scene:active {
+      cursor: grabbing;
+    }
+
+    .th-scene canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 12px;
+    }
+
+    .th-scene-note {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      z-index: 2;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      letter-spacing: 0.02em;
+      color: #334155;
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      pointer-events: none;
     }
 
     .th-canvas {
       display: block;
       width: 100%;
       height: auto;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background: color-mix(in srgb, var(--panel-soft) 72%, var(--panel));
+      border-radius: 12px;
+      border: 0;
+      background: #ffffff;
+    }
+
+    .receipt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .receipt-header .opti-heading {
+      margin-bottom: 0;
+    }
+
+    .receipt-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .receipt-mini-btn {
+      min-width: 30px;
+      min-height: 30px;
+      padding: 6px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #8290a6;
     }
 
     .receipt {
-      min-height: 200px;
-      max-height: 400px;
+      min-height: 118px;
+      max-height: 220px;
       overflow-y: auto;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      border-radius: 10px;
-      padding: 8px;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      border: 1px dashed #ddcf83;
+      background: #fff6bf;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-family: "Courier New", monospace;
       font-size: 0.78rem;
+      color: #2b2b2b;
       white-space: pre-wrap;
-      line-height: 1.35;
+      line-height: 1.45;
+    }
+
+    .opti-note {
+      margin: 8px 0 0;
+      font-size: 0.7rem;
+      color: #98a1b2;
+    }
+
+    body.dark .modal {
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    body.dark .opti-calc {
+      background: #171311;
+      border-color: #332b27;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.48);
+      color: #f6eee2;
+    }
+
+    body.dark .opti-calc .modal-head {
+      background: #171311;
+      border-bottom-color: #332b27;
+    }
+
+    body.dark .opti-calc .modal-head h3,
+    body.dark .opti-calc .icon-btn,
+    body.dark .opti-title-icon,
+    body.dark .opti-heading svg {
+      color: #f6eee2;
+    }
+
+    body.dark .opti {
+      background: #171311;
+    }
+
+    body.dark .opti-block {
+      background: #221c19;
+      border-color: #352d29;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    body.dark .opti-heading,
+    body.dark .opti-calc label,
+    body.dark .receipt-mini-btn {
+      color: #aa9f94;
+    }
+
+    body.dark .calc-shell {
+      background: #2a2320;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    body.dark .display,
+    body.dark .result,
+    body.dark .opti-calc input,
+    body.dark .opti-calc select,
+    body.dark .opti-calc textarea {
+      color: #f6eee2;
+    }
+
+    body.dark .opti-calc input,
+    body.dark .opti-calc select,
+    body.dark .opti-calc textarea {
+      background: #120f0e;
+      border-color: #342c28;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    body.dark .opti-calc input:focus,
+    body.dark .opti-calc select:focus,
+    body.dark .opti-calc textarea:focus {
+      border-color: #6c5d53;
+      box-shadow: 0 0 0 3px rgba(246, 238, 226, 0.08);
+    }
+
+    body.dark .opti-retail-btn,
+    body.dark .key,
+    body.dark .receipt-mini-btn {
+      background: #120f0e;
+      border-color: #342c28;
+      color: #f6eee2;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+    }
+
+    body.dark .opti-retail-btn.alert {
+      background: #412126;
+      border-color: #63313a;
+      color: #ffb5c0;
+    }
+
+    body.dark .key.op {
+      background: #120f0e;
+    }
+
+    body.dark .key.eq,
+    body.dark .opti-action {
+      background: #f6eee2;
+      color: #111111;
+      border-color: #f6eee2;
+    }
+
+    body.dark .opti-block-highlight {
+      background: #1d1715;
+      box-shadow: inset 3px 3px 0 #c98a0b, inset -3px -3px 0 #2aaa38;
+    }
+
+    body.dark .th-visual-wrap,
+    body.dark .th-canvas {
+      background: #120f0e;
+      border-color: #342c28;
+    }
+
+    body.dark .th-scene {
+      background: #000000;
+    }
+
+    body.dark .th-scene-note {
+      color: #f4f4f4;
+      background: rgba(0, 0, 0, 0.62);
+      border-color: rgba(244, 244, 244, 0.2);
+    }
+
+    body.dark .receipt {
+      background: #3b3312;
+      border-color: #8c7841;
+      color: #fff0a6;
+    }
+
+    .opti {
+      max-height: calc(94dvh - 150px);
+      overflow-y: auto;
     }
 
     .opti-print-sheet {
@@ -1603,6 +1987,45 @@
 
       .opti {
         grid-template-columns: 1fr;
+      }
+
+      .form-grid,
+      .form-grid.two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .modal {
+        padding: 10px;
+      }
+
+      .opti-calc {
+        width: 100%;
+        max-height: 94vh;
+        border-radius: 24px;
+      }
+
+      .opti-calc .modal-head {
+        padding: 18px 20px;
+      }
+
+      .opti {
+        padding: 14px;
+        max-height: calc(94dvh - 130px);
+      }
+
+      .calc-shell {
+        padding: 12px;
+      }
+
+      .opti-retail-row,
+      .keys {
+        gap: 6px;
+      }
+
+      .display {
+        font-size: 1.55rem;
       }
     }
 
@@ -1682,6 +2105,463 @@
       }
     }
   </style>
+  <style id="design-refresh-v2">
+    :root {
+      --rui-dark: #191c1f;
+      --rui-white: #ffffff;
+      --rui-surface: #f4f4f4;
+      --rui-border: #d6d7dc;
+      --rui-blue: #494fdf;
+      --rui-teal: #00a87e;
+      --rui-pink: #e61e49;
+      --rui-warning: #ec7e00;
+      --rui-text: #191c1f;
+      --rui-muted: #4a4e54;
+      --rainbow-outline-flow: linear-gradient(120deg, #ff003c, #ff6a00, #ffd400, #34d300, #00c8ff, #3659ff, #a600ff, #ff003c);
+      --rainbow-flow: var(--rainbow-outline-flow);
+      --sapphire-flow: var(--rainbow-outline-flow);
+    }
+
+    body,
+    html {
+      font-family: "Manrope", "Segoe UI", sans-serif !important;
+      letter-spacing: 0.01em;
+    }
+
+    body {
+      background:
+        radial-gradient(1000px 500px at 85% -5%, rgba(73, 79, 223, 0.08), transparent 60%),
+        radial-gradient(880px 480px at -5% 105%, rgba(0, 168, 126, 0.07), transparent 65%),
+        linear-gradient(180deg, #ffffff 0%, #f7f8fb 100%) !important;
+      color: var(--rui-text) !important;
+    }
+
+    body.dark {
+      --rainbow-flow: var(--rainbow-outline-flow);
+      --sapphire-flow: var(--rainbow-outline-flow);
+      background: #000000 !important;
+      color: #f4f4f4 !important;
+    }
+
+    .sidebar,
+    .hero.card,
+    .card,
+    .table,
+    .edu-tile,
+    .edu-modal-card,
+    .modal-card,
+    .opti-block,
+    .calc-shell,
+    .th-visual-wrap,
+    .receipt {
+      --box-fill: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid transparent !important;
+      background:
+        linear-gradient(var(--box-fill), var(--box-fill)) padding-box,
+        var(--rainbow-outline-flow) border-box !important;
+      background-size: 100% 100%, 320% 320% !important;
+      animation: rainbow-flow 9s linear infinite;
+    }
+
+    body.dark .sidebar,
+    body.dark .hero.card,
+    body.dark .card,
+    body.dark .table,
+    body.dark .edu-tile,
+    body.dark .edu-modal-card,
+    body.dark .modal-card,
+    body.dark .opti-block,
+    body.dark .calc-shell,
+    body.dark .th-visual-wrap,
+    body.dark .receipt {
+      --box-fill: #000000;
+    }
+
+    .sidebar::before,
+    .card::before,
+    .table::before,
+    .edu-tile::before,
+    .edu-modal-card::before,
+    .modal-card::before,
+    .opti-block::before,
+    .calc-shell::before,
+    .th-visual-wrap::before,
+    .receipt::before {
+      content: none !important;
+      display: none !important;
+    }
+
+    .topbar,
+    .sidebar,
+    .card,
+    .table,
+    .btn,
+    .chip,
+    .icon-btn,
+    .nav-item,
+    .edu-tile,
+    .edu-modal-card,
+    .modal-card {
+      box-shadow: none !important;
+    }
+
+    .topbar {
+      background: rgba(255, 255, 255, 0.88) !important;
+      border-bottom: 1px solid var(--rui-border) !important;
+      backdrop-filter: blur(10px);
+      padding: 12px 18px !important;
+    }
+
+    .modal {
+      align-items: flex-start !important;
+      overflow-y: auto !important;
+      padding: max(10px, 2vh) 12px !important;
+    }
+
+    .modal-card.opti-calc {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    body.dark .topbar {
+      background: rgba(0, 0, 0, 0.95) !important;
+      border-bottom-color: rgba(244, 244, 244, 0.18) !important;
+    }
+
+    .brand h1,
+    .hero h2,
+    .edu-title,
+    .modal-head h3 {
+      font-family: "Space Grotesk", "Manrope", sans-serif !important;
+      letter-spacing: -0.02em;
+    }
+
+    .brand h1 {
+      font-size: clamp(1.05rem, 1.6vw, 1.45rem) !important;
+      font-weight: 700 !important;
+      text-transform: none !important;
+    }
+
+    .brand p {
+      letter-spacing: 0.12em !important;
+      color: var(--rui-muted) !important;
+    }
+
+    .search-wrap input {
+      background: var(--rui-white) !important;
+      border: 2px solid var(--rui-border) !important;
+      border-radius: 9999px !important;
+      animation: none !important;
+      padding: 13px 18px 13px 42px !important;
+      font-size: 0.92rem !important;
+    }
+
+    body.dark .search-wrap input {
+      background: #000000 !important;
+      border-color: rgba(244, 244, 244, 0.35) !important;
+    }
+
+    .btn,
+    .chip,
+    .icon-btn,
+    .nav-item,
+    .edu-color-btn {
+      border-radius: 9999px !important;
+    }
+
+    .btn,
+    .chip,
+    .nav-item {
+      padding: 14px 32px !important;
+      font-family: "Space Grotesk", "Manrope", sans-serif !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.01em !important;
+    }
+
+    .btn {
+      border: 2px solid var(--rui-dark) !important;
+      background: transparent !important;
+      color: var(--rui-dark) !important;
+    }
+
+    .btn.primary {
+      background: var(--rui-dark) !important;
+      border-color: var(--rui-dark) !important;
+      color: var(--rui-white) !important;
+    }
+
+    .icon-btn {
+      width: 44px !important;
+      height: 44px !important;
+      border: 2px solid var(--rui-dark) !important;
+    }
+
+    body.dark .btn,
+    body.dark .chip,
+    body.dark .nav-item,
+    body.dark .icon-btn {
+      border-color: rgba(244, 244, 244, 0.68) !important;
+      color: #f4f4f4 !important;
+      background: transparent !important;
+    }
+
+    body.dark .btn.primary {
+      background: #f4f4f4 !important;
+      color: #191c1f !important;
+    }
+
+    .layout {
+      grid-template-columns: 310px minmax(0, 1fr) !important;
+      gap: 22px !important;
+      padding: 22px !important;
+    }
+
+    .sidebar {
+      background: rgba(255, 255, 255, 0.82) !important;
+      border: 1px solid var(--rui-border) !important;
+      border-radius: 20px !important;
+      padding: 18px !important;
+    }
+
+    body.dark .sidebar {
+      background: #000000 !important;
+    }
+
+    .side-title {
+      font-family: "Space Grotesk", "Manrope", sans-serif !important;
+      font-size: 0.82rem !important;
+      letter-spacing: 0.2em !important;
+      text-transform: uppercase !important;
+      color: var(--rui-muted) !important;
+    }
+
+    .nav-item {
+      width: 100%;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      margin-bottom: 8px;
+      border: 1px solid var(--rui-border) !important;
+      background: #ffffff !important;
+    }
+
+    .nav-item.active,
+    .chip.active {
+      background: var(--rui-dark) !important;
+      border-color: var(--rui-dark) !important;
+      color: var(--rui-white) !important;
+    }
+
+    body.dark .nav-item {
+      background: #000000 !important;
+      border-color: rgba(244, 244, 244, 0.35) !important;
+    }
+
+    .main {
+      padding: 0 !important;
+    }
+
+    .hero.card,
+    .card,
+    .table,
+    .edu-modal-card {
+      border-radius: 20px !important;
+      border: 1px solid var(--rui-border) !important;
+      background: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    body.dark .hero.card,
+    body.dark .card,
+    body.dark .table,
+    body.dark .edu-modal-card {
+      background: #000000 !important;
+      border-color: rgba(244, 244, 244, 0.35) !important;
+    }
+
+    .hero {
+      padding: 30px !important;
+    }
+
+    .hero h2 {
+      font-size: clamp(2rem, 5vw, 3.75rem) !important;
+      line-height: 1.02 !important;
+      letter-spacing: -0.04em !important;
+      margin-bottom: 10px !important;
+    }
+
+    .hero p,
+    .item-desc,
+    .edu-text {
+      font-size: 0.98rem !important;
+      color: var(--rui-muted) !important;
+      letter-spacing: 0.01em;
+    }
+
+    body.dark .hero p,
+    body.dark .item-desc,
+    body.dark .edu-text,
+    body.dark .side-title {
+      color: #c9c9cd !important;
+    }
+
+    .table {
+      border-collapse: separate !important;
+      border-spacing: 0 !important;
+      overflow: hidden;
+    }
+
+    .table thead th {
+      font-family: "Space Grotesk", "Manrope", sans-serif !important;
+      font-weight: 600 !important;
+      background: var(--rui-dark) !important;
+      color: var(--rui-white) !important;
+      border-bottom: none !important;
+      letter-spacing: 0.03em;
+      padding: 16px 18px !important;
+    }
+
+    .table tbody td {
+      padding: 16px 18px !important;
+    }
+
+    .table tbody tr:nth-child(even) {
+      background: rgba(25, 28, 31, 0.035);
+    }
+
+    body.dark .table tbody tr:nth-child(even) {
+      background: rgba(244, 244, 244, 0.04);
+    }
+
+    .item-name {
+      font-family: "Space Grotesk", "Manrope", sans-serif !important;
+      font-weight: 600 !important;
+    }
+
+    .item-price {
+      font-weight: 700 !important;
+      color: var(--rui-blue) !important;
+    }
+
+    body.dark .item-price {
+      color: #8a93ff !important;
+    }
+
+    .edu-library {
+      gap: 16px !important;
+    }
+
+    .edu-tile {
+      border: 1px solid var(--rui-border) !important;
+      background: rgba(255, 255, 255, 0.94) !important;
+      border-radius: 20px !important;
+      padding: 22px !important;
+      text-align: left;
+    }
+
+    body.dark .edu-tile {
+      background: #000000 !important;
+    }
+
+    .edu-icon {
+      border-radius: 16px !important;
+      background: var(--rui-surface) !important;
+      color: var(--rui-dark) !important;
+    }
+
+    body.dark .edu-icon {
+      background: rgba(244, 244, 244, 0.15) !important;
+      color: #ffffff !important;
+    }
+
+    .edu-link {
+      color: var(--rui-blue) !important;
+      font-family: "Space Grotesk", "Manrope", sans-serif !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.04em !important;
+    }
+
+    .edu-modal {
+      background: rgba(25, 28, 31, 0.56) !important;
+      backdrop-filter: blur(5px);
+    }
+
+    .edu-note {
+      border-left: 4px solid var(--rui-teal) !important;
+      background: rgba(0, 168, 126, 0.08) !important;
+    }
+
+    .edu-color-btn.active {
+      border-color: var(--rui-blue) !important;
+      background: rgba(73, 79, 223, 0.08) !important;
+    }
+
+    .search-header h3 {
+      font-family: "Space Grotesk", "Manrope", sans-serif !important;
+    }
+
+    #contentArea>section,
+    #contentArea>div {
+      animation: rise-in 360ms ease both;
+    }
+
+    @keyframes rise-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 1fr !important;
+        padding: 14px !important;
+        gap: 14px !important;
+      }
+
+      .sidebar {
+        display: none !important;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .hero {
+        padding: 22px !important;
+      }
+    }
+
+    @media (max-width: 680px) {
+
+      .btn,
+      .chip,
+      .nav-item {
+        padding: 12px 20px !important;
+        font-size: 0.86rem !important;
+      }
+
+      .hero h2 {
+        font-size: clamp(1.6rem, 9vw, 2.3rem) !important;
+        letter-spacing: -0.03em !important;
+      }
+
+      .search-wrap input {
+        padding-top: 11px !important;
+        padding-bottom: 11px !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -1713,10 +2593,6 @@
       <aside class="sidebar">
         <p class="side-title">Categories</p>
         <div id="categoryList" class="nav-list"></div>
-        <p class="side-title" style="margin-top: 16px;">Education</p>
-        <div class="nav-list">
-          <button class="nav-item" data-edu="true" type="button">Educational Materials <span>›</span></button>
-        </div>
       </aside>
 
       <main class="main">
@@ -1729,96 +2605,150 @@
   <section id="optiPrintSheet" class="opti-print-sheet" aria-hidden="true"></section>
 
   <div id="optiModal" class="modal" aria-hidden="true">
-    <div class="modal-card">
+    <div class="modal-card opti-calc">
       <div class="modal-head">
-        <h3>OptiCalc</h3>
+        <div class="opti-title">
+          <span class="opti-title-icon" aria-hidden="true">
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1.25" y="1.25" width="13.5" height="13.5" rx="2.25" stroke="currentColor" stroke-width="1.5" />
+              <rect x="4" y="4" width="2" height="2" rx="0.4" fill="currentColor" />
+              <rect x="7" y="4" width="2" height="2" rx="0.4" fill="currentColor" />
+              <rect x="10" y="4" width="2" height="2" rx="0.4" fill="currentColor" />
+              <rect x="4" y="7" width="2" height="2" rx="0.4" fill="currentColor" />
+              <rect x="7" y="7" width="5" height="2" rx="0.4" fill="currentColor" />
+              <rect x="4" y="10" width="2" height="2" rx="0.4" fill="currentColor" />
+              <rect x="7" y="10" width="2" height="2" rx="0.4" fill="currentColor" />
+              <rect x="10" y="10" width="2" height="2" rx="0.4" fill="currentColor" />
+            </svg>
+          </span>
+          <h3>OPTICALC</h3>
+        </div>
         <button id="closeOptiCalc" class="icon-btn" type="button" title="Close">✕</button>
       </div>
 
       <div class="opti">
-        <div class="stack">
+        <div class="opti-column">
           <section class="opti-block">
-            <h4>Calculator</h4>
-            <div id="calcDisplay" class="display"></div>
-            <div class="keys" id="calcKeys"></div>
-            <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
-              <button class="btn" data-retail="1.2" type="button">+20%</button>
-              <button class="btn" data-retail="1.3" type="button">+30%</button>
-              <button class="btn" data-retail="1.4" type="button">+40%</button>
-              <button class="btn" id="calcClear" type="button">Clear</button>
+            <div class="opti-heading">
+              <svg viewBox="0 0 8 16" width="8" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1.5" y="1" width="5" height="14" rx="2.5" fill="currentColor" />
+              </svg>
+              <span>Retail Calculator</span>
+            </div>
+            <div class="calc-shell">
+              <div id="calcDisplay" class="display"></div>
+              <div class="opti-retail-row">
+                <button class="opti-retail-btn" data-retail="1.06" type="button">+6% Tax</button>
+                <button class="opti-retail-btn" data-retail="0.9" type="button">-10% Off</button>
+                <button class="opti-retail-btn" data-retail="0.8" type="button">-20% Off</button>
+                <button class="opti-retail-btn alert" id="calcClear" type="button">C</button>
+              </div>
+              <div class="keys" id="calcKeys"></div>
             </div>
           </section>
 
-          <section class="opti-block">
-            <h4>Session Receipt</h4>
-            <div id="receipt" class="receipt"></div>
-            <div style="display:flex; gap:6px; margin-top:8px;">
-              <button class="btn" id="receiptClear" type="button">New Session</button>
-              <button class="btn" id="receiptPrint" type="button">Print</button>
+          <section class="opti-block opti-block-highlight">
+            <div class="opti-heading">
+              <svg viewBox="0 0 16 16" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 12L12 4M12 4H8.5M12 4V7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M12 12L4 4M4 4H7.5M4 4V7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                  stroke-linejoin="round" opacity="0.55" />
+              </svg>
+              <span>Decentration</span>
             </div>
+            <div class="form-grid">
+              <label>A (mm)<input id="decFrameA" type="number" step="any"></label>
+              <label>DBL (mm)<input id="decBridge" type="number" step="any"></label>
+              <label>Patient PD (mm)<input id="decPd" type="number" step="any"></label>
+            </div>
+            <button id="decCalc" class="opti-action" type="button">Calculate</button>
+            <div id="decResult" class="result"></div>
+          </section>
+
+          <section class="opti-block">
+            <div class="opti-heading">
+              <svg viewBox="0 0 16 16" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 5.5L8 3L13 5.5L8 8L3 5.5Z" stroke="currentColor" stroke-width="1.2"
+                  stroke-linejoin="round" />
+                <path d="M3 8.5L8 11L13 8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M3 11L8 13.5L13 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+              <span>MBS</span>
+            </div>
+            <div class="form-grid">
+              <label>ED<input id="mbsEd" type="number" step="any"></label>
+              <label>F.PD<input id="mbsFramePd" type="number" step="any"></label>
+              <label>P.PD<input id="mbsPatientPd" type="number" step="any"></label>
+            </div>
+            <button id="mbsCalc" class="opti-action" type="button">Calculate MBS</button>
+            <div id="mbsResult" class="result"></div>
           </section>
         </div>
 
-        <div class="stack">
-          <section class="opti-block">
-            <h4>Decentration</h4>
-            <div class="form-grid">
-              <label>Frame A<input id="decFrameA" type="number" step="any"></label>
-              <label>Bridge (DBL)<input id="decBridge" type="number" step="any"></label>
-              <label>Patient PD<input id="decPd" type="number" step="any"></label>
+        <div class="opti-column">
+          <section class="opti-block opti-block-profile">
+            <div class="opti-heading">
+              <svg viewBox="0 0 16 16" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M2 8C3.6 5.2 5.8 3.8 8 3.8C10.2 3.8 12.4 5.2 14 8C12.4 10.8 10.2 12.2 8 12.2C5.8 12.2 3.6 10.8 2 8Z"
+                  stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+                <circle cx="8" cy="8" r="2" fill="currentColor" />
+              </svg>
+              <span>Lens Profile</span>
             </div>
-            <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
-              <button id="decCalc" class="btn primary" type="button">Calculate</button>
-              <div id="decResult" class="result"></div>
-            </div>
-          </section>
-
-          <section class="opti-block">
-            <h4>MBS</h4>
-            <div class="form-grid">
-              <label>ED<input id="mbsEd" type="number" step="any"></label>
-              <label>Frame PD<input id="mbsFramePd" type="number" step="any"></label>
-              <label>Patient PD<input id="mbsPatientPd" type="number" step="any"></label>
-            </div>
-            <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
-              <button id="mbsCalc" class="btn primary" type="button">Calculate MBS</button>
-              <div id="mbsResult" class="result"></div>
-            </div>
-          </section>
-
-          <section class="opti-block">
-            <h4>Thickness Estimate</h4>
-            <div class="form-grid three">
+            <div class="form-grid two">
               <label>Index
                 <select id="thIndex">
-                  <option value="1.5">1.50</option>
-                  <option value="1.53">1.53</option>
-                  <option value="1.59" selected>1.59</option>
-                  <option value="1.6">1.60</option>
-                  <option value="1.67">1.67</option>
-                  <option value="1.74">1.74</option>
+                  <option value="1.5">Poly (1.50)</option>
+                  <option value="1.53">Trivex (1.53)</option>
+                  <option value="1.59" selected>Poly (1.59)</option>
+                  <option value="1.6">Hi-Index (1.60)</option>
+                  <option value="1.67">Hi-Index (1.67)</option>
+                  <option value="1.74">Hi-Index (1.74)</option>
                 </select>
               </label>
-              <label>Frame Type
+              <label>Frame
                 <select id="thFrameType">
-                  <option value="2.5" selected>Full Rim 2.5mm</option>
-                  <option value="1.21">Nylon 1.2mm</option>
+                  <option value="2.5" selected>Plastic (2.5mm)</option>
+                  <option value="1.21">Nylon (1.2mm)</option>
                   <option value="0">Drill Mount</option>
                 </select>
               </label>
-              <label>Power<input id="thPower" type="number" step="any" placeholder="-3.00"></label>
+            </div>
+            <div class="form-grid two">
+              <label>Sphere<input id="thPower" type="number" step="any" placeholder="-3.00"></label>
               <label>Diameter<input id="thDiameter" type="number" step="any" placeholder="70"></label>
-              <label>Decentration<input id="thDec" type="number" step="any" value="0"></label>
-              <label>Min CT<input id="thMin" type="number" step="any" value="1.5"></label>
             </div>
-            <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
-              <button id="thCalc" class="btn primary" type="button">Estimate</button>
-              <div id="thResult" class="result"></div>
+            <div class="opti-hidden">
+              <input id="thDec" type="number" step="any" value="0">
+              <input id="thMin" type="number" step="any" value="1.5">
+              <button id="thCalc" type="button">Estimate</button>
             </div>
+            <div id="thResult" class="result"></div>
             <div class="th-visual-wrap">
-              <canvas id="thCanvas" class="th-canvas" width="420" height="250"></canvas>
-              <p class="edu-text" style="margin-top:8px;">Lens profile preview based on thickness inputs.</p>
+              <div id="thScene" class="th-scene" aria-label="3D head thickness viewer"></div>
+              <div id="thSceneNote" class="th-scene-note">Loading 3D head model...</div>
+              <canvas id="thCanvas" class="th-canvas" width="420" height="250" style="display:none"></canvas>
             </div>
+          </section>
+
+          <section class="opti-block">
+            <div class="receipt-header">
+              <div class="opti-heading">
+                <svg viewBox="0 0 8 16" width="8" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="1.5" y="1" width="5" height="14" rx="2.5" fill="currentColor" />
+                </svg>
+                <span>Receipt</span>
+              </div>
+              <div class="receipt-actions">
+                <button class="receipt-mini-btn" id="receiptPrint" type="button">Print</button>
+                <button class="receipt-mini-btn" id="receiptClear" type="button">New</button>
+              </div>
+            </div>
+            <div id="receipt" class="receipt"></div>
           </section>
         </div>
       </div>
@@ -1826,6 +2756,9 @@
   </div>
 
   <script src="./data.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script>
     (function () {
       var LENS_DATA = Array.isArray(window.LENS_DATA) ? window.LENS_DATA : [];
@@ -1843,12 +2776,12 @@
           id: "polycarbonate",
           title: "Polycarbonate",
           iconLabel: "PC",
-          description: "Impact-resistant lens material with built-in UV protection for safety and active wear.",
+          description: "Polycarbonate lenses are the industry standard for safety. They are significantly more impact-resistant than standard plastic, making them the only choice for children, athletes, and safety eyewear.",
           benefits: [
             "10x more impact-resistant than plastic",
             "Built-in 100% UV protection",
             "Thinner and lighter than CR-39",
-            "Ideal for kids, sports, and safety jobs"
+            "Essential for rimless or semi-rimless frames"
           ],
           visualType: "lens-comparison",
           prescription: "-5.00D",
@@ -1859,12 +2792,12 @@
           id: "high-index",
           title: "High-Index Lenses",
           iconLabel: "HI",
-          description: "High-index designs bend light more efficiently, reducing thickness and cosmetic magnification.",
+          description: "High-index lenses are designed for people with strong prescriptions. They bend light more efficiently, allowing the lens to be significantly thinner and lighter than traditional materials.",
           benefits: [
             "Up to 50% thinner than standard lenses",
-            "Lower edge thickness for high minus powers",
+            "Reduces the coke-bottle effect",
             "Lighter for long-wear comfort",
-            "Cleaner look in slim and rimless frames"
+            "Better aesthetics for high prescriptions"
           ],
           visualType: "lens-comparison",
           prescription: "-5.00D",
@@ -1875,12 +2808,12 @@
           id: "ar-coating",
           title: "Anti-Reflective Coating",
           iconLabel: "AR",
-          description: "AR coatings reduce front and back reflections and improve night and screen comfort.",
+          description: "Anti-reflective (AR) coating eliminates reflections from the front and back of your lenses. This allows more light to pass through, improving your vision and making your eyes more visible to others.",
           benefits: [
-            "Cuts glare while driving at night",
+            "Reduces glare from night driving and computers",
             "Improves contrast and clarity",
-            "Makes lenses look cleaner and less reflective",
-            "Premium stacks add hydrophobic and oleophobic layers"
+            "Makes lenses nearly invisible",
+            "Reduces eye strain from overhead lighting"
           ],
           visualType: "slider",
           beforeImage: "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?auto=format&fit=crop&q=80&w=1200",
@@ -1912,12 +2845,12 @@
           id: "blue-light",
           title: "Blue Light Coating",
           iconLabel: "BL",
-          description: "Digital filtering technology to reduce blue-violet exposure from screens and LEDs.",
+          description: "Blue light filtering lenses are designed to reduce the amount of high-energy blue light reaching the eye from digital screens and artificial lighting.",
           benefits: [
             "Reduces digital eye fatigue",
-            "Improves comfort during long device use",
-            "Helps reduce high-energy blue-violet exposure",
-            "Useful for office and computer-focused wearers"
+            "May improve sleep quality",
+            "Filters harmful blue-violet light",
+            "Ideal for heavy computer and phone users"
           ],
           visualType: "slider",
           beforeImage: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200",
@@ -1931,12 +2864,12 @@
           id: "polarization",
           title: "Polarization",
           iconLabel: "PL",
-          description: "Polarized filters block reflected glare from roads, water, and snow.",
+          description: "Polarized lenses contain a special filter that blocks intense reflected light (glare) from surfaces like water, snow, and roads. Unlike standard sunglasses, they actually improve what you can see.",
           benefits: [
-            "Eliminates reflected glare",
-            "Boosts contrast and comfort",
-            "Improves visual detail outdoors",
-            "Great for driving, fishing, and bright conditions"
+            "Eliminates blinding glare",
+            "Increases visual contrast and color saturation",
+            "Reduces squinting and eye fatigue",
+            "Essential for fishing, driving, and skiing"
           ],
           visualType: "slider",
           beforeImage: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1200",
@@ -1955,12 +2888,12 @@
           id: "transitions",
           title: "Transitions",
           iconLabel: "TR",
-          description: "Photochromic technology that adapts from clear indoors to dark outdoors.",
+          description: "Transitions (photochromic) lenses automatically darken when exposed to UV light and return to clear indoors. They provide seamless protection and convenience in any light condition.",
           benefits: [
-            "Two-in-one everyday convenience",
-            "100% UVA/UVB protection",
+            "Convenience of two-in-one glasses",
+            "Blocks 100% of UVA and UVB rays",
             "Adaptive comfort in changing light",
-            "Available in multiple color families"
+            "Available in multiple stylish colors"
           ],
           visualType: "video",
           colors: [
@@ -2091,6 +3024,8 @@
           return "<button class=\"nav-item" + (active ? " active" : "") + "\" type=\"button\" data-cat=\"" + escapeHtml(cat.id) + "\">" +
             "<span>" + escapeHtml(cat.title) + "</span><span>›</span></button>";
         }).join("");
+        desktop += "<button class=\"nav-item" + (state.activeCategory === "educational-materials" ? " active" : "") + "\" type=\"button\" data-edu=\"1\">" +
+          "<span>Educational Materials</span><span>&rsaquo;</span></button>";
         els.categoryList.innerHTML = desktop;
 
         var mobile = LENS_DATA.map(function (cat) {
@@ -2269,7 +3204,7 @@
         }).join("");
 
         var html = "<section class=\"stack\">" +
-          "<div class=\"hero card\"><h2>Educational Materials</h2><p>Learn about lens materials and visual designs through interactive demos that match the old experience.</p></div>" +
+          "<div class=\"hero card\"><h2>Educational Materials</h2><p>All educational lens modules from Price are included here with interactive demos and visual comparisons.</p></div>" +
           "<div class=\"edu-library\">" + cards + "</div></section>";
 
         if (selectedMaterial) {
@@ -2401,6 +3336,11 @@
           state.showOptiCalc = true;
           els.optiModal.classList.add("open");
           els.optiModal.setAttribute("aria-hidden", "false");
+          if (typeof window.__resizeThickness3D === "function") {
+            setTimeout(function () {
+              window.__resizeThickness3D();
+            }, 40);
+          }
         });
 
         els.closeOptiCalc.addEventListener("click", function () {
@@ -2437,10 +3377,13 @@
         var receiptItems = ["--- Session Started ---"];
         var displayStr = "";
         var thCanvas = document.getElementById("thCanvas");
+        var thScene = document.getElementById("thScene");
+        var thSceneNote = document.getElementById("thSceneNote");
         var optiPrintSheet = document.getElementById("optiPrintSheet");
         var lastThicknessParams = null;
+        var thicknessViewer = null;
 
-        var keyLayout = ["7", "8", "9", "/", "4", "5", "6", "*", "1", "2", "3", "-", "0", ".", "(", ")", "C", "=", "+", "%"];
+        var keyLayout = ["7", "8", "9", "/", "4", "5", "6", "*", "1", "2", "3", "-", "0", ".", "=", "+"];
 
         function addReceipt(line) {
           var t = new Date();
@@ -2461,6 +3404,263 @@
           return Function("return (" + normalized + ");")();
         }
 
+        function createThickness3DViewer(container, noteEl, fallbackCanvas) {
+          if (!container || !window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) {
+            if (fallbackCanvas) {
+              fallbackCanvas.style.display = "block";
+            }
+            if (noteEl) {
+              noteEl.textContent = "3D viewer unavailable - using fallback image";
+            }
+            return null;
+          }
+
+          if (fallbackCanvas) {
+            fallbackCanvas.style.display = "none";
+          }
+
+          container.innerHTML = "";
+
+          var scene = new THREE.Scene();
+          var camera = new THREE.PerspectiveCamera(34, 1, 0.01, 50);
+          camera.position.set(0, 0.18, 2.2);
+
+          var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+          container.appendChild(renderer.domElement);
+
+          var controls = new THREE.OrbitControls(camera, renderer.domElement);
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.08;
+          controls.minDistance = 1.2;
+          controls.maxDistance = 3.2;
+          controls.target.set(0, 0.15, 0);
+          controls.maxPolarAngle = Math.PI * 0.86;
+
+          var ambient = new THREE.AmbientLight(0xffffff, 0.84);
+          scene.add(ambient);
+          var key = new THREE.DirectionalLight(0xffffff, 1.05);
+          key.position.set(2.1, 2.2, 2.5);
+          scene.add(key);
+          var fill = new THREE.DirectionalLight(0xffffff, 0.56);
+          fill.position.set(-2.3, 1.4, 1.2);
+          scene.add(fill);
+
+          var headRoot = new THREE.Group();
+          scene.add(headRoot);
+
+          var lensRoot = new THREE.Group();
+          scene.add(lensRoot);
+
+          var headMaterial = new THREE.MeshStandardMaterial({ color: 0x8b929e, roughness: 0.66, metalness: 0.02 });
+          var frameMaterial = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.42, metalness: 0.25 });
+
+          var currentThemeDark = false;
+
+          function clearLensMeshes() {
+            while (lensRoot.children.length) {
+              var child = lensRoot.children.pop();
+              if (child.geometry) child.geometry.dispose();
+              if (child.material && child.material.dispose) child.material.dispose();
+            }
+          }
+
+          function applyTheme(isDark) {
+            currentThemeDark = !!isDark;
+            renderer.setClearColor(currentThemeDark ? 0x000000 : 0xf8fafc, 1);
+            headMaterial.color.set(currentThemeDark ? 0xd7dee9 : 0x8b929e);
+            frameMaterial.color.set(currentThemeDark ? 0xe2e8f0 : 0x1f2937);
+            if (noteEl) {
+              noteEl.style.color = currentThemeDark ? "#f4f4f4" : "#334155";
+              noteEl.style.background = currentThemeDark ? "rgba(0,0,0,0.62)" : "rgba(255,255,255,0.72)";
+            }
+          }
+
+          function resize() {
+            var w = Math.max(220, container.clientWidth || 420);
+            var h = Math.max(220, container.clientHeight || 270);
+            renderer.setSize(w, h, false);
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+          }
+
+          function makeLensMaterial(thickness) {
+            var opacity = Math.min(0.38, 0.14 + (thickness * 0.012));
+            var tint = currentThemeDark ? 0x95b3ff : 0x88b0ff;
+            return new THREE.MeshPhysicalMaterial({
+              color: tint,
+              transmission: 0.94,
+              transparent: true,
+              opacity: opacity,
+              roughness: 0.08,
+              metalness: 0,
+              clearcoat: 1,
+              clearcoatRoughness: 0.08
+            });
+          }
+
+          function renderThickness(params, isDark) {
+            if (!params) return;
+            applyTheme(isDark);
+            clearLensMeshes();
+
+            var thickness = Number(params.finalThickness || 0);
+            var frameType = Number(params.frameType || 0);
+            var diameter = Number(params.diameter || 70);
+
+            var depth = THREE.MathUtils.clamp(0.012 + thickness * 0.0024, 0.016, 0.048);
+            var radius = THREE.MathUtils.clamp(0.14 + (diameter - 60) * 0.003, 0.14, 0.24);
+            var frameTube = frameType === 0 ? 0.004 : (frameType === 1.21 ? 0.006 : 0.009);
+
+            var lensMatLeft = makeLensMaterial(thickness);
+            var lensMatRight = makeLensMaterial(thickness);
+
+            [-1, 1].forEach(function (side) {
+              var lens = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, depth, 64), side < 0 ? lensMatLeft : lensMatRight);
+              lens.rotation.z = Math.PI / 2;
+              lens.position.set(side * 0.22, 0.11, 0.295);
+              lensRoot.add(lens);
+
+              if (frameType !== 0) {
+                var rim = new THREE.Mesh(new THREE.TorusGeometry(radius, frameTube, 20, 96), frameMaterial.clone());
+                rim.rotation.y = Math.PI / 2;
+                rim.position.copy(lens.position);
+                lensRoot.add(rim);
+              }
+            });
+
+            if (frameType !== 0) {
+              var bridge = new THREE.Mesh(new THREE.BoxGeometry(0.08, frameTube * 1.5, frameTube * 2.8), frameMaterial.clone());
+              bridge.position.set(0, 0.115, 0.34);
+              lensRoot.add(bridge);
+            }
+
+            if (noteEl) {
+              noteEl.textContent = "Drag to rotate head - Edge thickness " + thickness.toFixed(2) + " mm";
+            }
+          }
+
+          function showPlaceholder(message, isDark) {
+            applyTheme(isDark);
+            clearLensMeshes();
+            if (noteEl) {
+              noteEl.textContent = message || "Enter lens profile values to render 3D thickness";
+            }
+          }
+
+          function captureImage() {
+            return renderer.domElement.toDataURL("image/png");
+          }
+
+          function clearHeadMeshes() {
+            while (headRoot.children.length) {
+              var c = headRoot.children.pop();
+              if (c.geometry) c.geometry.dispose();
+              if (c.material && c.material.dispose) c.material.dispose();
+            }
+          }
+
+          function mountHeadObject(obj) {
+            if (!obj) return false;
+            var meshCount = 0;
+            obj.traverse(function (child) {
+              if (child.isMesh) {
+                meshCount += 1;
+                child.material = headMaterial;
+              }
+            });
+            if (!meshCount) return false;
+
+            var bounds = new THREE.Box3().setFromObject(obj);
+            var size = bounds.getSize(new THREE.Vector3());
+            var center = bounds.getCenter(new THREE.Vector3());
+            obj.position.sub(center);
+            var maxSide = Math.max(size.x, size.y, size.z) || 1;
+            var scale = 1.55 / maxSide;
+            obj.scale.setScalar(scale);
+            obj.position.y -= 0.28;
+
+            clearHeadMeshes();
+            headRoot.add(obj);
+            return true;
+          }
+
+          function addFallbackHead() {
+            clearHeadMeshes();
+            var fallbackHead = new THREE.Mesh(
+              new THREE.SphereGeometry(0.32, 40, 30),
+              headMaterial
+            );
+            fallbackHead.scale.set(1, 1.15, 0.92);
+            fallbackHead.position.set(0, 0.03, 0);
+            headRoot.add(fallbackHead);
+            if (noteEl) {
+              noteEl.textContent = "Could not reach head.glb - showing built-in 3D head";
+            }
+          }
+
+          var loader = new THREE.GLTFLoader();
+          var pathBase = (window.location && window.location.pathname)
+            ? window.location.pathname.replace(/[^\/]*$/, "")
+            : "/";
+          var rawCandidates = [
+            "./head.glb",
+            "head.glb",
+            pathBase + "head.glb",
+            "/head.glb",
+            "./public/head.glb",
+            "public/head.glb"
+          ];
+          var headCandidates = rawCandidates.filter(function (u, idx, arr) {
+            return !!u && arr.indexOf(u) === idx;
+          });
+
+          function tryLoadHeadAt(index) {
+            if (index >= headCandidates.length) {
+              addFallbackHead();
+              return;
+            }
+
+            var url = headCandidates[index];
+            if (noteEl) {
+              noteEl.textContent = "Loading 3D head model...";
+            }
+
+            loader.load(url, function (gltf) {
+              var obj = gltf && (gltf.scene || (gltf.scenes && gltf.scenes[0])) ? (gltf.scene || gltf.scenes[0]) : null;
+              if (mountHeadObject(obj)) {
+                if (noteEl) {
+                  noteEl.textContent = "Drag to rotate head - Scroll to zoom";
+                }
+                return;
+              }
+              tryLoadHeadAt(index + 1);
+            }, undefined, function () {
+              tryLoadHeadAt(index + 1);
+            });
+          }
+
+          tryLoadHeadAt(0);
+
+          function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+          }
+
+          window.addEventListener("resize", resize);
+          applyTheme(false);
+          resize();
+          animate();
+
+          return {
+            render: renderThickness,
+            showPlaceholder: showPlaceholder,
+            captureImage: captureImage,
+            resize: resize
+          };
+        }
+
         function cleanupOptiPrintMode() {
           document.body.classList.remove("opti-print-mode");
           if (optiPrintSheet) {
@@ -2479,8 +3679,16 @@
           var printHtml = "<h2 class=\"opti-print-title\">Session Receipt</h2>" +
             "<pre class=\"opti-print-receipt\">" + escapeHtml(receiptText || "--- Session Started ---") + "</pre>";
 
-          if (lastThicknessParams && thCanvas) {
-            printHtml += "<section class=\"opti-print-visual\"><h3>Lens Thickness Picture</h3><img src=\"" + thCanvas.toDataURL("image/png") + "\" alt=\"Lens thickness picture\"></section>";
+          if (lastThicknessParams) {
+            var visualDataUrl = "";
+            if (thicknessViewer && typeof thicknessViewer.captureImage === "function") {
+              visualDataUrl = thicknessViewer.captureImage();
+            } else if (thCanvas) {
+              visualDataUrl = thCanvas.toDataURL("image/png");
+            }
+            if (visualDataUrl) {
+              printHtml += "<section class=\"opti-print-visual\"><h3>Lens Thickness Picture</h3><img src=\"" + visualDataUrl + "\" alt=\"Lens thickness picture\"></section>";
+            }
           }
 
           optiPrintSheet.innerHTML = printHtml;
@@ -2491,7 +3699,13 @@
 
         window.addEventListener("afterprint", cleanupOptiPrintMode);
 
+        thicknessViewer = createThickness3DViewer(thScene, thSceneNote, thCanvas);
+
         function drawThicknessPlaceholder(message) {
+          if (thicknessViewer && typeof thicknessViewer.showPlaceholder === "function") {
+            thicknessViewer.showPlaceholder(message, state.isDarkMode);
+            return;
+          }
           if (!thCanvas) return;
           var ctx = thCanvas.getContext("2d");
           if (!ctx) return;
@@ -2511,6 +3725,10 @@
         }
 
         function drawThicknessVisualizer(params) {
+          if (thicknessViewer && typeof thicknessViewer.render === "function") {
+            thicknessViewer.render(params, state.isDarkMode);
+            return;
+          }
           if (!thCanvas || !params) return;
           var ctx = thCanvas.getContext("2d");
           if (!ctx) return;
@@ -2600,7 +3818,7 @@
           var btn = document.createElement("button");
           btn.type = "button";
           btn.className = "key" + ((/[/*+\-%]/.test(key) || key === "=") ? " op" : "") + (key === "=" ? " eq" : "");
-          btn.textContent = key;
+          btn.textContent = key === "/" ? "÷" : key === "*" ? "×" : key;
           btn.addEventListener("click", function () {
             if (key === "C") {
               displayStr = "";
@@ -2685,7 +3903,7 @@
           addReceipt("MBS = " + mbs.toFixed(1) + "mm");
         });
 
-        document.getElementById("thCalc").addEventListener("click", function () {
+        function estimateThickness(logReceipt) {
           var n = Number(document.getElementById("thIndex").value);
           var p = Number(document.getElementById("thPower").value);
           var d = Number(document.getElementById("thDiameter").value);
@@ -2693,14 +3911,17 @@
           var mt = Number(document.getElementById("thMin").value);
           var frameType = Number(document.getElementById("thFrameType").value);
           if (!Number.isFinite(n) || !Number.isFinite(p) || !Number.isFinite(d) || !Number.isFinite(mt)) {
-            drawThicknessPlaceholder("Enter valid thickness values first");
-            return;
+            document.getElementById("thResult").textContent = "";
+            drawThicknessPlaceholder("Enter lens profile values first");
+            return false;
           }
           var r = (d / 2) + Math.abs(dec);
           var sag = (Math.pow(r, 2) * Math.abs(p)) / (2000 * (n - 1));
           var finalThickness = sag + mt;
           document.getElementById("thResult").textContent = "Estimated edge thickness: " + finalThickness.toFixed(2) + " mm";
-          addReceipt("Thickness est. = " + finalThickness.toFixed(2) + "mm");
+          if (logReceipt !== false) {
+            addReceipt("Thickness est. = " + finalThickness.toFixed(2) + "mm");
+          }
 
           lastThicknessParams = {
             finalThickness: finalThickness,
@@ -2711,13 +3932,36 @@
             decentration: dec
           };
           drawThicknessVisualizer(lastThicknessParams);
+          return true;
+        }
+
+        document.getElementById("thCalc").addEventListener("click", function () {
+          estimateThickness(true);
+        });
+
+        ["thIndex", "thFrameType", "thPower", "thDiameter", "thDec", "thMin"].forEach(function (id) {
+          var field = document.getElementById(id);
+          if (!field) return;
+          var eventName = field.tagName === "SELECT" ? "change" : "input";
+          field.addEventListener(eventName, function () {
+            estimateThickness(false);
+          });
         });
 
         window.__redrawThicknessVisualizer = function () {
+          if (thicknessViewer && typeof thicknessViewer.resize === "function") {
+            thicknessViewer.resize();
+          }
           if (lastThicknessParams) {
             drawThicknessVisualizer(lastThicknessParams);
           } else {
             drawThicknessPlaceholder();
+          }
+        };
+
+        window.__resizeThickness3D = function () {
+          if (thicknessViewer && typeof thicknessViewer.resize === "function") {
+            thicknessViewer.resize();
           }
         };
 
