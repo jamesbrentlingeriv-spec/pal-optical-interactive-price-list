@@ -2729,9 +2729,9 @@
             </div>
             <div id="thResult" class="result"></div>
             <div class="th-visual-wrap">
-              <div id="thScene" class="th-scene" aria-label="3D head thickness viewer"></div>
-              <div id="thSceneNote" class="th-scene-note">Loading 3D head model...</div>
-              <canvas id="thCanvas" class="th-canvas" width="420" height="250" style="display:none"></canvas>
+              <div id="thScene" class="th-scene" aria-label="Opticalc side-profile thickness viewer"></div>
+              <div id="thSceneNote" class="th-scene-note">Opticalc profile image ready</div>
+              <canvas id="thCanvas" class="th-canvas" width="420" height="250"></canvas>
             </div>
           </section>
 
@@ -2756,9 +2756,6 @@
   </div>
 
   <script src="./data.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
   <script>
     (function () {
       var LENS_DATA = Array.isArray(window.LENS_DATA) ? window.LENS_DATA : [];
@@ -3405,307 +3402,250 @@
         }
 
         function createThickness3DViewer(container, noteEl, fallbackCanvas) {
-          if (!container || !window.THREE || !THREE.OBJLoader || !THREE.OrbitControls) {
-            if (fallbackCanvas) {
-              fallbackCanvas.style.display = "block";
-            }
-            if (noteEl) {
-              noteEl.textContent = "3D viewer unavailable - using fallback image";
-            }
+          var canvas = fallbackCanvas;
+          if (!canvas) {
             return null;
           }
 
-          if (fallbackCanvas) {
-            fallbackCanvas.style.display = "none";
+          if (container) {
+            container.style.display = "none";
+          }
+          canvas.style.display = "block";
+
+          var lastParams = null;
+          var lastDarkMode = false;
+          var lastMessage = "Enter lens profile values and click Estimate";
+
+          function applyNoteTheme(isDark) {
+            if (!noteEl) return;
+            noteEl.style.color = isDark ? "#f4f4f4" : "#334155";
+            noteEl.style.background = isDark ? "rgba(0,0,0,0.62)" : "rgba(255,255,255,0.72)";
           }
 
-          container.innerHTML = "";
+          function ensureCanvasSize() {
+            var cssWidth = Math.max(320, canvas.clientWidth || 420);
+            var cssHeight = Math.max(240, Math.round(cssWidth * 0.72));
+            var ratio = Math.min(window.devicePixelRatio || 1, 2);
+            var pixelWidth = Math.round(cssWidth * ratio);
+            var pixelHeight = Math.round(cssHeight * ratio);
 
-          var scene = new THREE.Scene();
-          var camera = new THREE.PerspectiveCamera(34, 1, 0.01, 50);
-          camera.position.set(0, 0.18, 2.2);
-
-          var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-          container.appendChild(renderer.domElement);
-
-          var controls = new THREE.OrbitControls(camera, renderer.domElement);
-          controls.enableDamping = true;
-          controls.dampingFactor = 0.08;
-          controls.minDistance = 1.2;
-          controls.maxDistance = 3.2;
-          controls.target.set(0, 0.15, 0);
-          controls.maxPolarAngle = Math.PI * 0.86;
-
-          var ambient = new THREE.AmbientLight(0xffffff, 0.84);
-          scene.add(ambient);
-          var key = new THREE.DirectionalLight(0xffffff, 1.05);
-          key.position.set(2.1, 2.2, 2.5);
-          scene.add(key);
-          var fill = new THREE.DirectionalLight(0xffffff, 0.56);
-          fill.position.set(-2.3, 1.4, 1.2);
-          scene.add(fill);
-
-          var headRoot = new THREE.Group();
-          scene.add(headRoot);
-
-          var lensRoot = new THREE.Group();
-          scene.add(lensRoot);
-
-          var headMetrics = {
-            width: 0.9,
-            height: 1.2,
-            depth: 0.85,
-            eyeY: 0.11,
-            frontZ: 0.3,
-            lensHalfSpacing: 0.22
-          };
-
-          var headMaterial = new THREE.MeshStandardMaterial({ color: 0x8b929e, roughness: 0.66, metalness: 0.02 });
-          var frameMaterial = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.42, metalness: 0.25 });
-
-          var currentThemeDark = false;
-
-          function clearLensMeshes() {
-            while (lensRoot.children.length) {
-              var child = lensRoot.children.pop();
-              if (child.geometry) child.geometry.dispose();
-              if (child.material && child.material.dispose) child.material.dispose();
+            if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+              canvas.width = pixelWidth;
+              canvas.height = pixelHeight;
             }
           }
 
-          function applyTheme(isDark) {
-            currentThemeDark = !!isDark;
-            renderer.setClearColor(currentThemeDark ? 0x000000 : 0xf8fafc, 1);
-            headMaterial.color.set(currentThemeDark ? 0xd7dee9 : 0x8b929e);
-            frameMaterial.color.set(currentThemeDark ? 0xe2e8f0 : 0x1f2937);
+          function drawPlaceholder(ctx, isDark, message) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = isDark ? "#050505" : "#f8fafc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = isDark ? "rgba(255,255,255,0.2)" : "rgba(15,23,42,0.16)";
+            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(
+              Math.round(canvas.width * 0.03),
+              Math.round(canvas.height * 0.05),
+              Math.round(canvas.width * 0.94),
+              Math.round(canvas.height * 0.9)
+            );
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = isDark ? "#ffffff" : "#334155";
+            ctx.font = Math.round(canvas.width * 0.03) + "px Segoe UI";
+            ctx.fillText(message || "Enter lens profile values and click Estimate", Math.round(canvas.width * 0.06), Math.round(canvas.height * 0.12));
+          }
+
+          function drawOpticalcProfile(ctx, params, isDark) {
+            var maxThickness = Number(params.finalThickness || 0);
+            var frameTypeRaw = Number(params.frameType || 0);
+            var frameThickMm = (frameTypeRaw === 1.21) ? 1.2 : frameTypeRaw;
+            var isPlus = Number(params.power || 0) > 0;
+
+            var isSemi = (frameTypeRaw === 1.21);
+            var isZyl = (frameTypeRaw === 2.5);
+            var isDrill = (frameThickMm === 0);
+
+            var faceColor = isDark ? "#ffffff" : "#555555";
+            var lensColor = isDark ? "rgba(147, 197, 253, 0.26)" : "rgba(0, 150, 255, 0.34)";
+            var lensOutline = isDark ? "#bfdbfe" : "#0066cc";
+            var frameColor = isDark ? "#e2e8f0" : "#222222";
+            var templeColor = isDark ? "#cbd5e1" : "#444444";
+            var textColor = isDark ? "#ffffff" : "#000000";
+            var warnColor = isDark ? "#ff8080" : "#cc0000";
+            var okColor = isDark ? "#93f39f" : "#008800";
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = isDark ? "#050505" : "#f8fafc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Opticalc drawing coordinates are built for a 400x300 canvas.
+            var sx = canvas.width / 400;
+            var sy = canvas.height / 300;
+            ctx.save();
+            ctx.scale(sx, sy);
+
+            ctx.beginPath();
+            ctx.moveTo(220, 20);
+            ctx.bezierCurveTo(230, 50, 220, 80, 200, 100);
+            ctx.bezierCurveTo(220, 120, 240, 140, 240, 160);
+            ctx.bezierCurveTo(220, 170, 210, 175, 210, 180);
+            ctx.bezierCurveTo(220, 185, 225, 190, 215, 195);
+            ctx.bezierCurveTo(210, 198, 205, 200, 210, 205);
+            ctx.bezierCurveTo(220, 215, 225, 220, 220, 230);
+            ctx.bezierCurveTo(210, 250, 180, 260, 150, 280);
+            ctx.strokeStyle = faceColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.ellipse(170, 105, 12, 6, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(175, 105, 3, 0, Math.PI * 2);
+            ctx.fillStyle = faceColor;
+            ctx.fill();
+
+            var scale = 5;
+            var lensThickPx = maxThickness * scale;
+            var frameThickPx = frameThickMm * scale;
+
+            var frontX = 225;
+            var topY = 75;
+            var lensHeight = 90;
+            var backX = frontX - lensThickPx;
+
+            ctx.fillStyle = lensColor;
+            ctx.strokeStyle = lensOutline;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(frontX, topY);
+            ctx.quadraticCurveTo(frontX + 3, topY + lensHeight / 2, frontX, topY + lensHeight);
+            ctx.lineTo(backX, topY + lensHeight);
+            ctx.quadraticCurveTo(backX - (isPlus ? 8 : 4), topY + lensHeight / 2, backX, topY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            if (isDrill) {
+              ctx.fillStyle = isDark ? lensOutline : "#888888";
+              ctx.fillRect(frontX - lensThickPx - 2, topY + 20, lensThickPx + 4, 6);
+              ctx.fillStyle = isDark ? "white" : "black";
+              ctx.beginPath(); ctx.arc(frontX + 2, topY + 23, 1.5, 0, Math.PI * 2); ctx.fill();
+              ctx.beginPath(); ctx.arc(backX - 2, topY + 23, 1.5, 0, Math.PI * 2); ctx.fill();
+
+              ctx.fillStyle = templeColor;
+              ctx.fillRect(50, topY + 20, backX - 50, 4);
+            } else {
+              ctx.fillStyle = frameColor;
+
+              if (isZyl) {
+                ctx.beginPath();
+                ctx.moveTo(frontX + 0.5, topY - 0.5);
+                ctx.lineTo(frontX + 0.5, topY + lensHeight + 0.5);
+                ctx.lineTo(frontX - frameThickPx, topY + lensHeight + 0.5);
+                ctx.lineTo(frontX - frameThickPx, topY - 0.5);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = templeColor;
+                ctx.fillRect(50, topY + 15, frontX - frameThickPx - 50, isDark ? 4 : 6);
+              } else if (isSemi) {
+                ctx.fillRect(frontX - frameThickPx - 1, topY - 2, lensThickPx + frameThickPx + 2, 4);
+
+                ctx.strokeStyle = frameColor;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(backX, topY + lensHeight + 0.5);
+                ctx.lineTo(frontX, topY + lensHeight + 0.5);
+                ctx.stroke();
+
+                ctx.fillStyle = templeColor;
+                ctx.fillRect(50, topY + 15, backX - 50, isDark ? 4 : 6);
+              } else {
+                ctx.strokeStyle = frameColor;
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(frontX - frameThickPx, topY - 1, frameThickPx + 1, lensHeight + 2);
+
+                ctx.fillStyle = templeColor;
+                ctx.fillRect(50, topY + 15, backX - 50, isDark ? 4 : 6);
+              }
+            }
+
+            var exposedMm = Math.max(0, maxThickness - frameThickMm).toFixed(2);
+
+            ctx.fillStyle = textColor;
+            ctx.font = "14px Arial";
+            ctx.textAlign = "left";
+            ctx.fillText("Max Lens Thickness: " + maxThickness.toFixed(2) + " mm", 15, 25);
+            ctx.fillText("Frame Coverage: " + frameThickMm.toFixed(2) + " mm", 15, 45);
+
+            ctx.fillStyle = (exposedMm > 0) ? warnColor : okColor;
+            ctx.font = "bold 15px Arial";
+            ctx.fillText("Exposed Lens: " + exposedMm + " mm", 15, 68);
+
+            if (exposedMm > 0 && !isDrill) {
+              ctx.strokeStyle = ctx.fillStyle;
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(frontX - frameThickPx, topY + lensHeight + 10);
+              ctx.lineTo(backX, topY + lensHeight + 10);
+              ctx.stroke();
+
+              ctx.beginPath();
+              ctx.moveTo(frontX - frameThickPx, topY + lensHeight + 5);
+              ctx.lineTo(frontX - frameThickPx, topY + lensHeight + 15);
+              ctx.moveTo(backX, topY + lensHeight + 5);
+              ctx.lineTo(backX, topY + lensHeight + 15);
+              ctx.stroke();
+            }
+
+            ctx.restore();
+
             if (noteEl) {
-              noteEl.style.color = currentThemeDark ? "#f4f4f4" : "#334155";
-              noteEl.style.background = currentThemeDark ? "rgba(0,0,0,0.62)" : "rgba(255,255,255,0.72)";
+              var label = isPlus ? "Center Thickness (Plus Lens)" : "Edge Thickness (Minus Lens)";
+              noteEl.textContent = "Opticalc profile image - " + label + " " + maxThickness.toFixed(2) + " mm";
             }
           }
 
-          function resize() {
-            var w = Math.max(220, container.clientWidth || 420);
-            var h = Math.max(220, container.clientHeight || 270);
-            renderer.setSize(w, h, false);
-            camera.aspect = w / h;
-            camera.updateProjectionMatrix();
-          }
+          function redraw() {
+            ensureCanvasSize();
+            var ctx = canvas.getContext("2d");
+            if (!ctx) return;
+            applyNoteTheme(lastDarkMode);
 
-          function makeLensMaterial(thickness) {
-            var opacity = Math.min(0.38, 0.14 + (thickness * 0.012));
-            var tint = currentThemeDark ? 0x95b3ff : 0x88b0ff;
-            return new THREE.MeshPhysicalMaterial({
-              color: tint,
-              transmission: 0.94,
-              transparent: true,
-              opacity: opacity,
-              roughness: 0.08,
-              metalness: 0,
-              clearcoat: 1,
-              clearcoatRoughness: 0.08
-            });
-          }
-
-          function updateHeadMetricsFromBounds(bounds) {
-            if (!bounds) return;
-            var size = bounds.getSize(new THREE.Vector3());
-            headMetrics.width = Math.max(0.56, size.x || 0.9);
-            headMetrics.height = Math.max(0.78, size.y || 1.2);
-            headMetrics.depth = Math.max(0.48, size.z || 0.85);
-            headMetrics.eyeY = bounds.min.y + headMetrics.height * 0.62;
-            headMetrics.frontZ = bounds.max.z - headMetrics.depth * 0.035;
-            headMetrics.lensHalfSpacing = THREE.MathUtils.clamp(headMetrics.width * 0.24, 0.17, 0.3);
-
-            controls.target.set(0, headMetrics.eyeY, 0);
-            controls.update();
+            if (lastParams) {
+              drawOpticalcProfile(ctx, lastParams, lastDarkMode);
+            } else {
+              drawPlaceholder(ctx, lastDarkMode, lastMessage);
+            }
           }
 
           function renderThickness(params, isDark) {
-            if (!params) return;
-            applyTheme(isDark);
-            clearLensMeshes();
-
-            var thickness = Number(params.finalThickness || 0);
-            var frameType = Number(params.frameType || 0);
-            var diameter = Number(params.diameter || 70);
-
-            var depth = THREE.MathUtils.clamp(0.012 + thickness * 0.0024, 0.016, 0.048);
-            var radiusByDiameter = THREE.MathUtils.clamp(0.14 + (diameter - 60) * 0.003, 0.14, 0.24);
-            var radiusByHead = THREE.MathUtils.clamp(headMetrics.width * 0.155, 0.13, 0.23);
-            var radius = Math.min(radiusByDiameter, radiusByHead);
-            var frameTube = frameType === 0 ? 0.004 : (frameType === 1.21 ? 0.006 : 0.009);
-            var lensY = headMetrics.eyeY;
-            var lensZ = headMetrics.frontZ - depth * 0.44;
-            var lensHalfSpacing = THREE.MathUtils.clamp(headMetrics.lensHalfSpacing, radius * 1.02, headMetrics.width * 0.33);
-
-            var lensMatLeft = makeLensMaterial(thickness);
-            var lensMatRight = makeLensMaterial(thickness);
-
-            [-1, 1].forEach(function (side) {
-              var lens = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, depth, 64), side < 0 ? lensMatLeft : lensMatRight);
-              lens.rotation.z = Math.PI / 2;
-              lens.position.set(side * lensHalfSpacing, lensY, lensZ);
-              lensRoot.add(lens);
-
-              if (frameType !== 0) {
-                var rim = new THREE.Mesh(new THREE.TorusGeometry(radius, frameTube, 20, 96), frameMaterial.clone());
-                rim.rotation.y = Math.PI / 2;
-                rim.position.copy(lens.position);
-                lensRoot.add(rim);
-              }
-            });
-
-            if (frameType !== 0) {
-              var bridgeWidth = THREE.MathUtils.clamp((lensHalfSpacing - radius * 0.88) * 2, 0.04, 0.12);
-              var bridge = new THREE.Mesh(new THREE.BoxGeometry(bridgeWidth, frameTube * 1.5, frameTube * 2.8), frameMaterial.clone());
-              bridge.position.set(0, lensY + radius * 0.05, lensZ + depth * 0.28);
-              lensRoot.add(bridge);
-            }
-
-            if (noteEl) {
-              noteEl.textContent = "Drag to rotate head - Edge thickness " + thickness.toFixed(2) + " mm";
-            }
+            lastParams = params || null;
+            lastDarkMode = !!isDark;
+            redraw();
           }
 
           function showPlaceholder(message, isDark) {
-            applyTheme(isDark);
-            clearLensMeshes();
+            lastParams = null;
+            lastDarkMode = !!isDark;
+            lastMessage = message || "Enter lens profile values and click Estimate";
             if (noteEl) {
-              noteEl.textContent = message || "Enter lens profile values to render 3D thickness";
+              noteEl.textContent = "Opticalc profile image ready";
             }
+            redraw();
           }
 
           function captureImage() {
-            return renderer.domElement.toDataURL("image/png");
+            return canvas.toDataURL("image/png");
           }
 
-          function clearHeadMeshes() {
-            while (headRoot.children.length) {
-              var c = headRoot.children.pop();
-              if (c.geometry) c.geometry.dispose();
-              if (c.material && c.material.dispose) c.material.dispose();
-            }
-          }
-
-          function mountHeadObject(obj) {
-            if (!obj) return false;
-            var meshCount = 0;
-            obj.traverse(function (child) {
-              if (child.isMesh) {
-                meshCount += 1;
-                child.material = headMaterial;
-              }
-            });
-            if (!meshCount) return false;
-
-            obj.rotation.set(0, 0, 0);
-            obj.position.set(0, 0, 0);
-            obj.updateMatrixWorld(true);
-
-            var preBounds = new THREE.Box3().setFromObject(obj);
-            var preSize = preBounds.getSize(new THREE.Vector3());
-            if (preSize.z > preSize.y * 1.08 && preSize.z >= preSize.x) {
-              obj.rotation.x = -Math.PI / 2;
-              obj.updateMatrixWorld(true);
-              preBounds = new THREE.Box3().setFromObject(obj);
-              preSize = preBounds.getSize(new THREE.Vector3());
-            }
-
-            var center = preBounds.getCenter(new THREE.Vector3());
-            obj.position.sub(center);
-            obj.updateMatrixWorld(true);
-
-            var orientedBounds = new THREE.Box3().setFromObject(obj);
-            if (Math.abs(orientedBounds.min.z) > Math.abs(orientedBounds.max.z) * 1.07) {
-              obj.rotation.y += Math.PI;
-              obj.updateMatrixWorld(true);
-              orientedBounds = new THREE.Box3().setFromObject(obj);
-            }
-
-            var orientedSize = orientedBounds.getSize(new THREE.Vector3());
-            var maxSide = Math.max(orientedSize.x, orientedSize.y, orientedSize.z) || 1;
-            var scale = 1.55 / maxSide;
-            obj.scale.setScalar(scale);
-            obj.position.y -= 0.28;
-            obj.updateMatrixWorld(true);
-
-            var finalBounds = new THREE.Box3().setFromObject(obj);
-            updateHeadMetricsFromBounds(finalBounds);
-
-            clearHeadMeshes();
-            headRoot.add(obj);
-            return true;
-          }
-
-          function addFallbackHead() {
-            clearHeadMeshes();
-            var fallbackHead = new THREE.Mesh(
-              new THREE.SphereGeometry(0.32, 40, 30),
-              headMaterial
-            );
-            fallbackHead.scale.set(1, 1.15, 0.92);
-            fallbackHead.position.set(0, 0.03, 0);
-            headRoot.add(fallbackHead);
-            updateHeadMetricsFromBounds(new THREE.Box3().setFromObject(fallbackHead));
-            if (noteEl) {
-              noteEl.textContent = "Could not reach head.obj - showing built-in 3D head";
-            }
-          }
-
-          var loader = new THREE.OBJLoader();
-          var pathBase = (window.location && window.location.pathname)
-            ? window.location.pathname.replace(/[^\/]*$/, "")
-            : "/";
-          var rawCandidates = [
-            "./head.obj",
-            "head.obj",
-            pathBase + "head.obj",
-            "/head.obj",
-            "./public/head.obj",
-            "public/head.obj"
-          ];
-          var headCandidates = rawCandidates.filter(function (u, idx, arr) {
-            return !!u && arr.indexOf(u) === idx;
-          });
-
-          function tryLoadHeadAt(index) {
-            if (index >= headCandidates.length) {
-              addFallbackHead();
-              return;
-            }
-
-            var url = headCandidates[index];
-            if (noteEl) {
-              noteEl.textContent = "Loading 3D head model...";
-            }
-
-            loader.load(url, function (obj) {
-              if (mountHeadObject(obj)) {
-                if (noteEl) {
-                  noteEl.textContent = "Drag to rotate head - Scroll to zoom";
-                }
-                return;
-              }
-              tryLoadHeadAt(index + 1);
-            }, undefined, function () {
-              tryLoadHeadAt(index + 1);
-            });
-          }
-
-          tryLoadHeadAt(0);
-
-          function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
+          function resize() {
+            redraw();
           }
 
           window.addEventListener("resize", resize);
-          applyTheme(false);
-          resize();
-          animate();
+          showPlaceholder("Enter lens profile values and click Estimate", false);
 
           return {
             render: renderThickness,
