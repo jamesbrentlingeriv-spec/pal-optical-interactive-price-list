@@ -2719,8 +2719,8 @@
               </label>
             </div>
             <div class="form-grid two">
-              <label>Sphere<input id="thPower" type="number" step="any" placeholder="-3.00"></label>
-              <label>Diameter<input id="thDiameter" type="number" step="any" placeholder="70"></label>
+              <label>Sphere<input id="thPower" type="number" step="any" value="-3.00"></label>
+              <label>Diameter<input id="thDiameter" type="number" step="any" value="70"></label>
             </div>
             <div class="opti-hidden">
               <input id="thDec" type="number" step="any" value="0">
@@ -3941,6 +3941,8 @@
             estimateThickness(false);
           });
         });
+
+        estimateThickness(false);
 
         window.__redrawThicknessVisualizer = function () {
           if (thicknessViewer && typeof thicknessViewer.resize === "function") {
