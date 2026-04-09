@@ -3,7 +3,7 @@ import fs from "fs";
 
 const browser = await puppeteer.launch({ headless: true });
 const page = await browser.newPage();
-await page.setViewport({ width: 375, height: 812 }); // Mobile viewport
+await page.setViewport({ width: 1400, height: 900 });
 
 // Collect console messages and errors
 const logs = [];
