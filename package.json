@@ -7,6 +7,7 @@
   "scripts": {
     "start": "npx --yes serve . -l 3000"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "puppeteer": "^24.40.0"
+  }
 }
