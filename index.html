@@ -28,7 +28,7 @@
       --accent-strong: #4b5563;
       --good: #9ca3af;
       --shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
-      --rainbow-flow: linear-gradient(120deg, #000000, #111111, #1a1a1a, #050505, #000000, #050505, #1a1a1a, #000000);
+      --rainbow-flow: #00ff00;
       --sapphire-flow: linear-gradient(115deg, #031525, #0b3d91, #1683ff, #59b7ff, #0e5fca, #062b5b, #031525);
     }
 
@@ -43,7 +43,7 @@
       --accent-strong: #d4d4d8;
       --good: #d4d4d8;
       --shadow: 0 10px 40px rgba(0, 0, 0, 0.42);
-      --rainbow-flow: linear-gradient(120deg, #ffffff, #f5f5f5, #e5e5e5, #ffffff, #fafafa, #ffffff, #e5e5e5, #ffffff);
+      --rainbow-flow: #00ff00;
       --sapphire-flow: linear-gradient(115deg, #03111e, #0b2e70, #1268d7, #54aaf7, #0f5bc1, #08264b, #03111e);
     }
 
@@ -187,13 +187,9 @@
 
     .search-wrap input {
       width: 100%;
-      border: 1px solid transparent;
+      border: 2px solid var(--rainbow-flow);
       border-radius: 999px;
-      background:
-        linear-gradient(var(--panel-soft), var(--panel-soft)) padding-box,
-        var(--rainbow-flow) border-box;
-      background-size: 100% 100%, 300% 300%;
-      animation: rainbow-flow 8s linear infinite;
+      background: var(--panel-soft);
       color: var(--text);
       padding: 8px 14px 8px 38px;
       outline: none;
@@ -312,8 +308,8 @@
       border-radius: inherit;
       padding: 1px;
       background: var(--rainbow-flow);
-      background-size: 300% 300%;
-      animation: rainbow-flow 11s linear infinite;
+      background-size: 100% 100%;
+      animation: none;
       opacity: 0.9;
       pointer-events: none;
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -454,12 +450,58 @@
       opacity: 0;
     }
 
+    .chip::before {
+      opacity: 0;
+    }
+
+    .chip.active::before {
+      padding: 3px;
+      opacity: 1;
+      background: var(--rainbow-flow);
+      background-size: 100% 100%;
+      animation: none;
+    }
+
+    .chip.active::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ff2b2b;
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: color-mix(in srgb, var(--panel) 96%, transparent);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: none;
+    }
+
+    .card::before {
+      padding: 3px;
+      background: var(--rainbow-flow);
+      background-size: 100% 100%;
+      animation: none;
+    }
+
+    .card::before {
+      padding: 3px;
+      background: var(--rainbow-flow);
+      background-size: 100% 100%;
+      animation: none;
+    }
+
     .nav-item.active::before {
       padding: 3px;
       opacity: 1;
       background: var(--rainbow-flow);
-      background-size: 320% 320%;
-      animation: rainbow-flow 2.4s linear infinite;
+      background-size: 100% 100%;
+      animation: none;
     }
 
     .nav-list .nav-item:nth-child(6n + 1) {
@@ -529,15 +571,15 @@
     }
 
     .chip::before {
-      opacity: 0;
+      opacity: 0;dd
     }
 
     .chip.active::before {
       padding: 3px;
       opacity: 1;
       background: var(--rainbow-flow);
-      background-size: 320% 320%;
-      animation: rainbow-flow 2.4s linear infinite;
+      background-size: 100% 100%;
+      animation: none;
     }
 
     .chip.active::after {
@@ -563,8 +605,8 @@
     .card::before {
       padding: 3px;
       background: var(--rainbow-flow);
-      background-size: 320% 320%;
-      animation: rainbow-flow 2.4s linear infinite;
+      background-size: 100% 100%;
+      animation: none;
     }
 
     .hero {
@@ -2117,8 +2159,8 @@
       --rui-warning: #ec7e00;
       --rui-text: #191c1f;
       --rui-muted: #4a4e54;
-      --rainbow-outline-flow: linear-gradient(120deg, #ff003c, #ff6a00, #ffd400, #34d300, #00c8ff, #3659ff, #a600ff, #ff003c);
-      --rainbow-flow: var(--rainbow-outline-flow);
+      --rainbow-outline-flow: #00ff00;
+      --rainbow-flow: #00ff00;
       --sapphire-flow: var(--rainbow-outline-flow);
     }
 
@@ -2137,7 +2179,7 @@
     }
 
     body.dark {
-      --rainbow-flow: var(--rainbow-outline-flow);
+      --rainbow-flow: #00ff00;
       --sapphire-flow: var(--rainbow-outline-flow);
       background: #000000 !important;
       color: #f4f4f4 !important;
@@ -2155,12 +2197,9 @@
     .th-visual-wrap,
     .receipt {
       --box-fill: rgba(255, 255, 255, 0.92);
-      border: 1.5px solid transparent !important;
-      background:
-        linear-gradient(var(--box-fill), var(--box-fill)) padding-box,
-        var(--rainbow-outline-flow) border-box !important;
-      background-size: 100% 100%, 320% 320% !important;
-      animation: rainbow-flow 9s linear infinite;
+      border: 2px solid var(--rainbow-flow) !important;
+      background: var(--box-fill) !important;
+      animation: none !important;
     }
 
     body.dark .sidebar,
